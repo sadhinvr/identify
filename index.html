@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Container Query Dev Tool</title>
+  <style>
+    body {
+      background: linear-gradient(243deg, rgba(254, 240, 255, 1) 0%, rgba(255, 224, 224, 1) 100%);
+      min-height: 100vh;
+      margin: 0;
+    }
+    .imgs {
+      height: 600px;
+      position: relative;
+      background: rgba(255, 255, 255, 0.2);
+      border: 2px solid #ccc;
+      overflow: hidden;
+      container-type: inline-size;
+      container-name: iconbox;
+    }
+    .imgs>div {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 98px;
+      height: 98px;
+      background: #fff;
+      border-radius: 100%;
+      position: absolute;
+      user-select: none;
+      -webkit-user-drag: none;
+      top: 40%;
+      left: 40%;
+      z-index: 11;
+      transform: scale(0.9);
+      transition: all .3s ease-in-out;
+      filter: saturate(0);
+      cursor: pointer;
+    }
+    .imgs>div.active-node, .imgs>div:hover {
+      transform: scale(1.1);
+      filter: saturate(1);
+    }
+    .imgs>div>img { max-width: 80%; max-height: 60%; }
+    .connector {
+      position: absolute;
+      height: 2px;
+      background: linear-gradient(90deg, #8400ff 10%, #ff0090 25%, #8400ff 50%, #8400ff 60%, #ff0090 75%, #8400ff 90%);
+      background-size: 200% 100%;
+      background-repeat: no-repeat;
+      transform-origin: 0 50%;
+      pointer-events: none;
+      animation: moveGradient 4s linear infinite;
+      will-change: transform, width;
+      z-index: 10;
+    }
+    @keyframes moveGradient {
+      0% { background-position: 200% 0%; }
+      32% { background-position: 100% 0%; }
+      48% { background-position: 50% 0%; }
+      64% { background-position: 0% 0%; }
+      100% { background-position: -100% 0%; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="imgs" id="main-container"></div>
+
+  <script>
+    const ICONS = ['a.svg', 'adyen.svg', 'ai.svg', 'arrow.svg', 'aws.svg', 'bi.svg', 'cognos.svg', 'fis.svg', 'fiserv.svg', 'h.svg', 'jh.svg', 'lithic.svg', 'nacha.svg', 'ncino.svg', 'sardine.svg', 'snow.svg', 'stripe.svg', 'verafin.svg', 'visa.svg'];
+    const BREAKPOINTS = {
+      320: [52, [115.6, 101.4, 176.6, 31.4, 12.6, 119.4, 250.6, 346.4, 1.6, 338.4, 202.6, 167.4, 116.6, 462.4, 10.6, 211.4, 98.6, 10.4, 251.6, 238.4, 105.6, 370.4, 12.6, 449.4, 255.6, 95.4, 111, 195, 179, 298, 72, 277, 8, 18, 247, 11, 241, 454]],
+      386: [52, [201.6, 190.4, 194.6, 78.4, 14.6, 216.4, 307.6, 394.4, 1.6, 338.4, 318.6, 76.4, 117.6, 490.4, 214.6, 394.4, 98.6, 10.4, 319.6, 292.4, 106.6, 391.4, 12.6, 449.4, 302.6, 181.4, 95, 152, 209, 298, 119, 291, 7, 81, 258, 15, 243, 488]],
+      433: [52, [212.6, 190.4, 194.6, 78.4, 14.6, 216.4, 370.6, 314.4, 1.6, 338.4, 313.6, 117.4, 117.6, 490.4, 344.6, 421.4, 98.6, 10.4, 369.6, 25.4, 164.6, 394.4, 12.6, 449.4, 344.6, 202.4, 95, 152, 239, 296, 119, 291, 7, 81, 258, 15, 252, 479]],
+      483: [64, [212.6, 190.4, 194.6, 78.4, 14.6, 216.4, 367.6, 343.4, 1.6, 338.4, 313.6, 117.4, 117.6, 490.4, 369.6, 460.4, 98.6, 10.4, 406.6, 29.4, 206.6, 395.4, 12.6, 449.4, 397.6, 207.4, 95, 152, 264, 294, 119, 291, 7, 81, 295, 14, 261, 492]],
+      558: [64, [212.6, 190.4, 194.6, 78.4, 15.6, 230.4, 383.6, 423.4, 1.6, 338.4, 311.6, 108.4, 209.6, 406.4, 431.6, 119.4, 98.6, 10.4, 434.6, 27.4, 284.6, 299.4, 63.6, 423.4, 336.6, 210.4, 95, 152, 416, 319, 154, 298, 5, 87, 295, 14, 477, 215]],
+      602: [75, [254.6, 207.4, 194.6, 78.4, 15.6, 230.4, 397.6, 437.4, 1.6, 338.4, 337.6, 115.4, 231.6, 401.4, 478.6, 123.4, 98.6, 10.4, 397.6, 22.4, 326.6, 303.4, 89.6, 425.4, 436.6, 218.4, 119, 176, 509, 7, 154, 298, 5, 87, 283, 14, 487, 325]],
+      672: [75, [256.6, 180.4, 194.6, 78.4, 15.6, 230.4, 564.6, 253.4, 23.6, 350.4, 337.6, 115.4, 582.6, 115.4, 478.6, 123.4, 98.6, 10.4, 397.6, 22.4, 310.6, 308.4, 171.6, 379.4, 441.6, 237.4, 119, 153, 509, 7, 170, 262, 5, 87, 283, 14, 444, 360]],
+      785: [75, [256.6, 180.4, 194.6, 78.4, 15.6, 230.4, 626.6, 49.4, 65.6, 332.4, 373.6, 130.4, 602.6, 211.4, 522.6, 113.4, 98.6, 10.4, 397.6, 22.4, 349.6, 271.4, 262.6, 355.4, 465.6, 214.4, 119, 153, 509, 7, 170, 262, 5, 87, 290, 7, 468, 336]],
+      828: [75, [321.6, 200.4, 237.6, 110.4, 15.6, 230.4, 673.6, 33.4, 60.6, 351.4, 481.6, 221.4, 683.6, 147.4, 542.6, 123.4, 121.6, 38.4, 389.6, 99.4, 429.6, 332.4, 309.6, 357.4, 622.6, 252.4, 137, 192, 509, 7, 183, 295, 5, 87, 290, 7, 561, 359]]
+    };
+
+    const container = document.getElementById('main-container');
+
+    // Generate Icon Nodes
+    container.innerHTML = ICONS.map(src => `<div draggable="false"><img src="icons/${src}" draggable="false"></div>`).join('');
+
+    // Generate CSS via DRY loop
+    let dynamicStyles = "";
+    Object.entries(BREAKPOINTS).forEach(([width, [size, coords]]) => {
+      let rules = `.imgs>div{width:${size}px;height:${size}px}`;
+      for (let i = 0; i < coords.length; i += 2) {
+        rules += `.imgs>div:nth-child(${i / 2 + 1}){left:${coords[i]}px;top:${coords[i + 1]}px}`;
+      }
+      dynamicStyles += `@container iconbox (min-width:${width}px){${rules}}`;
+    });
+    const styleTag = document.createElement('style');
+    styleTag.textContent = dynamicStyles;
+    setTimeout(() => document.head.appendChild(styleTag), 200);
+  </script>
+
+  <script>
+    const CONNECTION_DATA = {
+      320: [[512, 4096, 256, 3328, 1807, 1039, 2575, 1289, 3593, 777], [2826, 1546, 1034, 1805, 3853, 525, 1293, 273, 3089], [4098, 512, 8, 2574, 782, 3847, 3844, 4364, 1289], [4096, 13, 3342, 1034, 1546, 273, 3077, 264, 3081], [2318, 782, 2826, 4618, 2566, 1039, 3847, 2048, 256]],
+      386: [[-4096, -1289, 3081], [-1293, -1805, 2061, 1297, 2307, 1795], [-1289, -4364, -3847, -3844, 3854, -8, -512, 3330, 273, 1297, 12, 2316], [-4096], []],
+      433: [[-3593, -3081, -777, -1807, 3599], [-3089, -2307, 2309], [], [], [-2318, 3086]],
+      483: [[], [], [], [-3342, 3343, 4109], [-3847, 527, -2048, 4097]],
+      558: [[-3599, 2831, 1810, 4622], [-1034, -2826, -1795, 778], [-3854, 1539, -2316, 15], [-1034, 2574], [-2826, -4618, 2574, -2566, -4097, 2049, 4353]],
+      602: [[-4622, -1810, 1804, 4620], [], [-782, -2574, 4611], [-2574, 3090, 1547], [-2574, -3086, -782, 1804, 4620]],
+      672: [[-512, 780, 3591], [-1546, -778, 2572, 4611, 3075], [], [-1547, -1546], []],
+      785: [[-780], [-3075, -4611, 4620, 1548], [-4611, 1795, 3587, 10], [], []],
+      828: [[-2575, 527, -3591, 1292, -3328, 2304], [-1297, 1797, 4366], [-1297, -12, 11, 264], [-3081, 2318, 3587, 3591], [1292]]
+    };
+
+    (function connectionEngine() {
+      const mainContainer = document.getElementById('main-container');
+      const nodes = mainContainer.querySelectorAll('.imgs > div');
+      let loopTimer = null;
+      let activeTimeouts = [];
+      let isTransitioning = false;
+
+      const unpack = (val) => [val >> 8, val & 0xFF];
+
+      const getActiveBP = () => {
+        const w = mainContainer.offsetWidth;
+        const bps = Object.keys(BREAKPOINTS).map(Number).sort((a, b) => a - b);
+        return w < bps[0] ? null : bps.filter(b => w >= b).pop();
+      };
+
+      const getLinks = (targetBP, scene) => {
+        const links = new Set();
+        for (const bp of Object.keys(BREAKPOINTS).map(Number).sort((a, b) => a - b)) {
+          if (bp > targetBP) break;
+          (CONNECTION_DATA[bp]?.[scene] || []).forEach(v => v > 0 ? links.add(v) : links.delete(-v));
+        }
+        return Array.from(links).map(unpack);
+      };
+
+      const clearState = () => {
+        nodes.forEach(el => el.classList.remove('active-node'));
+        activeTimeouts.forEach(clearTimeout);
+        activeTimeouts = [];
+      };
+
+      const render = () => {
+        document.querySelectorAll('.connector').forEach(n => n.remove());
+        if (!isTransitioning) clearState();
+
+        const bp = getActiveBP();
+        const scene = window.currentScene || 0;
+        if (!bp) return;
+
+        const nodeData = Array.from(nodes).map(node => {
+          const r = node.getBoundingClientRect();
+          return { cx: r.left + r.width / 2 + window.scrollX, cy: r.top + r.height / 2 + window.scrollY, r: r.width / 2 };
+        });
+
+        const fragment = document.createDocumentFragment();
+        getLinks(bp, scene).forEach(([start, end]) => {
+          const a = nodeData[start], b = nodeData[end];
+          if (!a || !b) return;
+
+          const dx = b.cx - a.cx, dy = b.cy - a.cy;
+          const angle = Math.atan2(dy, dx);
+          const length = Math.hypot(dx, dy) - a.r - b.r + 2;
+
+          if (length > 0) {
+            const line = document.createElement('div');
+            line.className = 'connector directional-line';
+            Object.assign(line.style, {
+              width: `${length}px`,
+              left: `${a.cx + Math.cos(angle) * (a.r - 1)}px`,
+              top: `${a.cy + Math.sin(angle) * (a.r - 1)}px`,
+              transform: `rotate(${angle}rad)`
+            });
+            fragment.appendChild(line);
+
+            if (!isTransitioning) {
+              nodes[start].classList.add('active-node');
+              activeTimeouts.push(setTimeout(() => nodes[end].classList.add('active-node'), 1280));
+              activeTimeouts.push(setTimeout(() => nodes[start].classList.remove('active-node'), 2560));
+            }
+          }
+        });
+        document.body.appendChild(fragment);
+      };
+
+      window.changeScene = (index) => {
+        const bp = getActiveBP();
+        if (bp) {
+          window.currentScene = index % CONNECTION_DATA[bp].length;
+          render();
+        }
+      };
+
+      const handleResize = () => {
+        isTransitioning = true;
+        let start = null;
+        const step = (ts) => {
+          if (!start) start = ts;
+          render();
+          if (ts - start < 500) requestAnimationFrame(step);
+          else { isTransitioning = false; render(); }
+        };
+        requestAnimationFrame(step);
+      };
+
+      new ResizeObserver(handleResize).observe(mainContainer);
+      window.addEventListener('scroll', render);
+
+      setTimeout(() => {
+        render();
+        loopTimer = setInterval(() => {
+          const bp = getActiveBP();
+          if (bp) window.changeScene(((window.currentScene || 0) + 1) % CONNECTION_DATA[bp].length);
+        }, 4000);
+      }, 600);
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,299 @@
+<!-- <script id="dev-helper">
+    (function () {
+      const container = document.getElementById('main-container');
+      container.style.resize = 'both';
+
+      // Setup UI Panel
+      const panel = document.createElement('div');
+      panel.style = "position:fixed; top:10px; right:10px; width:350px; height:90vh; background:#fff; border:2px solid #333; z-index:9999; display:flex; flex-direction:column; padding:15px; font-family: monospace; box-shadow: 0 0 20px rgba(0,0,0,0.3);";
+      panel.innerHTML = `
+        <h3 style="margin:0">Container Query Gen</h3>
+        <p id="size-info" style="background:#eee; padding:5px; font-size:12px; margin: 10px 0;">Size: 0x0</p>
+        
+        <div style="margin-bottom: 15px; background: #f0f0f0; padding: 10px; border-radius: 4px;">
+          <label style="font-size: 12px; font-weight: bold;">Global Icon Size: <span id="size-val">98</span>px</label><br>
+          <input type="range" id="global-size" min="20" max="300" value="98" style="width: 100%; margin-top: 5px;">
+        </div>
+
+        <button id="save-breakpoint" style="padding:10px; background:#2ecc71; color:#fff; border:none; cursor:pointer; margin-bottom:10px;">Save Current Breakpoint</button>
+        <textarea id="css-output" readonly style="flex:1; font-size:10px; border:1px solid #ccc;"></textarea>
+        <button id="copy-btn" style="margin-top:10px; padding:10px; background:#333; color:#fff; border:none; cursor:pointer;">Copy All Code</button>
+      `;
+      document.body.appendChild(panel);
+
+      const savedCode = {};
+      const sizeSlider = document.getElementById('global-size');
+      const sizeVal = document.getElementById('size-val');
+
+      setTimeout(() => {
+        const items = container.querySelectorAll('.imgs > div');
+        const output = document.getElementById('css-output');
+
+        // Global Resizing Logic
+        sizeSlider.addEventListener('input', (e) => {
+          const newSize = e.target.value + 'px';
+          sizeVal.innerText = e.target.value;
+          items.forEach(el => {
+            el.style.width = newSize;
+            el.style.height = newSize;
+          });
+        });
+
+        // Drag Logic
+        items.forEach((el) => {
+          let isDragging = false;
+          let offset = { x: 0, y: 0 };
+          el.style.cursor = 'grab';
+
+          el.onmousedown = (e) => {
+            isDragging = true;
+            el.style.zIndex = 1000;
+            const rect = el.getBoundingClientRect();
+            offset = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+            e.preventDefault();
+          };
+
+          document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            const cRect = container.getBoundingClientRect();
+            el.style.left = (e.clientX - cRect.left - offset.x) + 'px';
+            el.style.top = (e.clientY - cRect.top - offset.y) + 'px';
+          });
+
+          document.addEventListener('mouseup', () => {
+            if (isDragging) {
+              isDragging = false;
+              el.style.zIndex = 1;
+            }
+          });
+        });
+
+        // Save Breakpoint Logic
+        document.getElementById('save-breakpoint').onclick = () => {
+          const w = container.offsetWidth;
+          const currentSize = sizeSlider.value + 'px';
+
+          let breakpointCSS = `/* Breakpoint for container width: ${w}px */\n`;
+          breakpointCSS += `@container iconbox (max-width: ${w}px) {\n`;
+          // Set global size for this container width
+          breakpointCSS += `  .imgs > div { width: ${currentSize}; height: ${currentSize}; }\n`;
+
+          items.forEach((el, i) => {
+            const left = el.style.left || '0px';
+            const top = el.style.top || '0px';
+            breakpointCSS += `  .imgs > div:nth-child(${i + 1}) { left: ${left}; top: ${top}; }\n`;
+          });
+          breakpointCSS += `}\n\n`;
+
+          savedCode[w] = breakpointCSS;
+          output.value = Object.values(savedCode).join('');
+        };
+      }, 100);
+
+      // Container Size Label
+      const ro = new ResizeObserver(() => {
+        document.getElementById('size-info').innerText = `Current Container: ${container.offsetWidth}px x ${container.offsetHeight}px`;
+      });
+      ro.observe(container);
+
+      document.getElementById('copy-btn').onclick = () => {
+        document.getElementById('css-output').select();
+        document.execCommand('copy');
+        alert("Container Queries Copied!");
+      };
+    })();
+  </script> -->
+
+
+
+
+<!-- lining  -->
+
+
+<!-- 
+
+    /* DEV ONLY STYLES */
+    #temp-line {
+      position: absolute;
+      height: 2px;
+      border-top: 2px dashed #FF000B;
+      transform-origin: 0 50%;
+      pointer-events: none;
+      z-index: 9999;
+      background: none !important;
+    }
+
+    .node-link-source {
+      box-shadow: 0 0 0 4px #FF000B !important;
+    }
+
+    .bp-btn {
+      padding: 5px 10px;
+      margin: 2px;
+      cursor: pointer;
+      background: #eee;
+      border: 1px solid #ccc;
+    }
+
+    .bp-btn.active {
+      background: #2ecc71;
+      color: white;
+    }
+
+<script>
+    /* --- UTILITIES --- */
+    const getActiveBP = () => {
+      const container = document.getElementById('main-container');
+      if (!container) return null;
+      const w = container.offsetWidth;
+      const bps = Object.keys(breakpoints).map(Number).sort((a, b) => a - b);
+      return w < bps[0] ? null : bps.filter(b => w >= b).pop();
+    };
+
+    // Pack preserving direction: Start index in high bits, End index in low bits
+    const pack = (start, end) => (start << 8) | end;
+    const unpack = (val) => [val >> 8, val & 0xFF];
+
+    function connectCircles(a, b, line) {
+      const r1 = a.getBoundingClientRect(), r2 = b.getBoundingClientRect();
+      const radius1 = r1.width / 2, radius2 = r2.width / 2 || 0;
+      const ax = r1.left + radius1 + window.scrollX, ay = r1.top + radius1 + window.scrollY;
+      const bx = r2.left + radius2 + window.scrollX, by = r2.top + radius2 + window.scrollY;
+      const dx = bx - ax, dy = by - ay, angle = Math.atan2(dy, dx);
+      const length = Math.hypot(dx, dy) - radius1 - radius2 + 2;
+
+      if (length > 0) {
+        line.style.width = `${length}px`;
+        line.style.left = `${ax + Math.cos(angle) * (radius1 - 1)}px`;
+        line.style.top = `${ay + Math.sin(angle) * (radius1 - 1)}px`;
+        line.style.transform = `rotate(${angle}rad)`;
+        line.style.visibility = 'visible';
+        // Add directional class
+        line.classList.add('directional-line');
+      } else line.style.visibility = 'hidden';
+    }
+
+    /* --- DEV TOOL ENGINE --- */
+    (function devLinker() {
+      // Add Arrowhead CSS dynamically
+      const style = document.createElement('style');
+      style.textContent = `
+    .connector.directional-line::after {
+      content: ''; position: absolute; right: -2px; top: 50%;
+      transform: translateY(-50%);
+      border-left: 8px solid currentColor;
+      border-top: 5px solid transparent;
+      border-bottom: 5px solid transparent;
+    }
+  `;
+      document.head.appendChild(style);
+
+      const container = document.getElementById('main-container');
+      let data = {};
+      let activeScene = 0;
+      let isLinking = false, startIdx = null, tempLine = null;
+
+      Object.keys(breakpoints).forEach(bp => data[bp] = [[]]);
+
+      const getLinks = (targetBP, scene) => {
+        const bps = Object.keys(breakpoints).map(Number).sort((a, b) => a - b);
+        const links = new Set();
+        for (const bp of bps) {
+          if (bp > targetBP) break;
+          (data[bp][scene] || []).forEach(v => v > 0 ? links.add(v) : links.delete(-v));
+        }
+        return Array.from(links).map(unpack);
+      };
+
+      const panel = document.createElement('div');
+      panel.style = "position:fixed; bottom:10px; right:10px; width:320px; background:white; border:2px solid #333; z-index:10000; padding:12px; font-family:monospace; box-shadow: 0 0 15px rgba(0,0,0,0.2); border-radius:8px; font-size:11px;";
+      document.body.appendChild(panel);
+
+      const updateUI = () => {
+        const bp = getActiveBP();
+        const maxS = Math.max(1, ...Object.values(data).map(v => v.length));
+
+        panel.innerHTML = `
+      <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+        <b>BP: ${bp || '<320'}</b>
+        <button id="add-s" style="cursor:pointer; background:#333; color:#fff; border:none; padding:2px 6px;">+ Scene</button>
+      </div>
+      <div style="margin-bottom:8px;">
+        ${Object.keys(breakpoints).map(b => `<button class="bp-b" style="margin:1px; cursor:pointer; background:${b == bp ? '#2ecc71' : '#eee'}; border:1px solid #ccc; font-size:9px;">${b}</button>`).join('')}
+      </div>
+      <div style="margin-bottom:8px;">
+        ${Array.from({ length: maxS }).map((_, i) => `<button class="sc-b" style="padding:3px 6px; margin:1px; cursor:pointer; background:${i == activeScene ? '#3498db' : '#eee'}; color:${i == activeScene ? '#fff' : '#000'}; border:1px solid #ccc;">S${i + 1}</button>`).join('')}
+      </div>
+      <textarea id="out" readonly style="width:100%; height:60px; font-size:9px; margin-bottom:5px;"></textarea>
+      <button id="copy" style="width:100%; padding:6px; cursor:pointer; background:#444; color:#fff; border:none;">Copy Directional JSON</button>
+    `;
+
+        panel.querySelectorAll('.bp-b').forEach((b, i) => b.onclick = () => container.style.width = Object.keys(breakpoints)[i] + 'px');
+        panel.querySelectorAll('.sc-b').forEach((b, i) => b.onclick = () => { activeScene = i; updateUI(); });
+        document.getElementById('add-s').onclick = () => { Object.keys(breakpoints).forEach(k => { if (!data[k][maxS]) data[k].push([]); }); activeScene = maxS; updateUI(); };
+        document.getElementById('copy').onclick = () => {
+          navigator.clipboard.writeText(JSON.stringify(data));
+          alert("Directional Data Copied!");
+        };
+        draw();
+      };
+
+      const draw = () => {
+        document.querySelectorAll('.connector:not(#temp-line)').forEach(l => l.remove());
+        const bp = getActiveBP();
+        if (!bp) return;
+        const nodes = container.querySelectorAll('.imgs > div');
+        getLinks(bp, activeScene).forEach(([a, b]) => {
+          const l = document.createElement('div');
+          l.className = 'connector'; l.style.pointerEvents = 'auto';
+          document.body.appendChild(l);
+          connectCircles(nodes[a], nodes[b], l);
+          l.ondblclick = () => {
+            const val = pack(a, b);
+            const local = data[bp][activeScene];
+            local.includes(val) ? local.splice(local.indexOf(val), 1) : local.push(-val);
+            updateUI();
+          };
+        });
+        document.getElementById('out').value = JSON.stringify(data);
+      };
+
+      container.addEventListener('contextmenu', (e) => {
+        const bp = getActiveBP();
+        const n = e.target.closest('.imgs > div');
+        if (!bp || !n) return;
+        e.preventDefault();
+        isLinking = true;
+        startIdx = Array.from(container.querySelectorAll('.imgs > div')).indexOf(n);
+        tempLine = document.createElement('div'); tempLine.id = 'temp-line'; tempLine.className = 'connector';
+        document.body.appendChild(tempLine);
+      });
+
+      document.addEventListener('mousedown', e => { if (isLinking && e.button === 0) { isLinking = false; tempLine.remove(); draw(); } });
+      document.addEventListener('mousemove', e => {
+        if (!isLinking) return;
+        const sNode = container.querySelectorAll('.imgs > div')[startIdx];
+        connectCircles(sNode, { getBoundingClientRect: () => ({ left: e.clientX, top: e.clientY, width: 0, height: 0 }) }, tempLine);
+      });
+
+      document.addEventListener('mouseup', e => {
+        if (!isLinking || e.button !== 2) return;
+        const t = e.target.closest('.imgs > div');
+        const nodes = Array.from(container.querySelectorAll('.imgs > div'));
+        const endIdx = nodes.indexOf(t);
+        if (t && endIdx !== startIdx) {
+          const bp = getActiveBP();
+          const val = pack(startIdx, endIdx);
+          if (!data[bp][activeScene].includes(val)) {
+            data[bp][activeScene].push(val);
+            data[bp][activeScene] = data[bp][activeScene].filter(v => v !== -val);
+          }
+        }
+        isLinking = false; if (tempLine) tempLine.remove(); updateUI();
+      });
+
+      new ResizeObserver(updateUI).observe(container);
+      updateUI();
+    })();
+
+  </script> -->
