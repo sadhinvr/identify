@@ -14,6 +14,7 @@
 
     .line-icon-wrapper {
       position: relative;
+      height: 1200px;
     }
 
     .all-conneting-imgs {
@@ -21,18 +22,19 @@
       container-type: inline-size;
       container-name: iconbox;
       z-index: 12;
-      position: relative; /* Ensure child absolute positioning works */
+      position: relative;
+      /* Ensure child absolute positioning works */
     }
 
-    
-/* ========= lineIcons custom css ========= */
+
+    /* ========= lineIcons custom css ========= */
     .all-conneting-imgs>div {
       display: flex;
       align-items: center;
       justify-content: center;
       width: 98px;
       height: 98px;
-      background: #fff;
+      background: transparent;
       border-radius: 100%;
       position: absolute;
       user-select: none;
@@ -40,21 +42,44 @@
       top: 40%;
       left: 40%;
       z-index: 11;
-      transform: scale(0.9);
-      transition: all .3s ease-in-out;
+      transform: scale(1);
       filter: saturate(0);
       cursor: pointer;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+      outline: 1px solid #a2b2c8;
+      transition: all .35s ease-in-out, background .2s;
+      will-change: transform, box-shadow, background-color;
+    }
+
+    .all-conneting-imgs.out-of-view>div {
+      /* width: 98px; */
+      /* height: 98px; */
+      /* top: 40% !important; */
+      /* left: 40% !important; */
+      opacity: 0;
     }
 
     .all-conneting-imgs>div.active-node,
     .all-conneting-imgs>div:hover {
-      transform: scale(1.1);
-      filter: saturate(1);
+      transform: scale(1.125);
+      filter: saturate(1) ;
+      box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+      background-color: #fff;
+      outline: 1px solid transparent;
+    }
+
+    .all-conneting-imgs>div.active-node img,
+    .all-conneting-imgs>div:hover img {
+      transform: scale(0.8);
+      opacity: 1;
     }
 
     .all-conneting-imgs>div>img {
-      max-width: 80%;
+      max-width: 70%;
       max-height: 60%;
+      transition: all .3s ease-in-out;
+      opacity: 0.8;
+      will-change: transform,opacity;
     }
 
     /* Fixed Line Container */
@@ -71,21 +96,42 @@
     .connector {
       position: absolute;
       height: 2px;
-      background: linear-gradient(90deg, #8400ff 10%, #ff0090 25%, #8400ff 50%, #8400ff 60%, #ff0090 75%, #8400ff 90%);
+      /* background: linear-gradient(90deg, #8400ff 10%, #ff0090 25%, #8400ff 50%, #8400ff 60%, #ff0090 75%, #8400ff 90%); */
+      background: repeating-linear-gradient(90deg, #8C48FF, #FF6848 50%, #8C48FF 100%);
       background-size: 200% 100%;
       background-repeat: no-repeat;
       transform-origin: 0 50%;
       pointer-events: none;
-      animation: moveGradient 4s linear infinite;
+      animation: moveGradient 3s cubic-bezier(0.65, 0.05, 0.36, 1) infinite;
       will-change: transform, width;
     }
 
     @keyframes moveGradient {
-      0% { background-position: 200% 0%; }
-      32% { background-position: 100% 0%; }
-      48% { background-position: 50% 0%; }
-      64% { background-position: 0% 0%; }
-      100% { background-position: -100% 0%; }
+      0% {
+        background-position: 200% 0%;
+      }
+
+      32% {
+        background-position: 100% 0%;
+      }
+
+      48% {
+        background-position: 50% 0%;
+      }
+
+      64% {
+        background-position: 0% 0%;
+      }
+
+      100% {
+        background-position: -100% 0%;
+      }
+    }
+
+    .all-conneting-imgs>div.nextanimenode:hover,
+    .all-conneting-imgs>div.nextanimenode {
+      filter: saturate(1);
+      transform: scale(1);
     }
   </style>
 </head>
@@ -93,11 +139,18 @@
 <body>
   <div class="" style="height: 100dvh; display: flex; align-items: center; justify-content: center;">
     <h1>Scroll Down</h1>
+    <div class="connector" style="width: 400.092px; left: 420.878px; top: 232.239px; transform: rotate(2.65731rad);"></div>
   </div>
 
-  <div class="line-icon-wrapper" id="wrapper">
-    <div class="all-conneting-imgs" id="all-conneting-imgs-id"></div>
-    <div id="all-conneting-imgs-lines"></div>
+  <div class="" style="display: grid; grid-template-columns: 0.8fr 1fr;">
+    <div class="">
+      <h1>heading 123</h1>
+    </div>
+
+    <div class="line-icon-wrapper" id="wrapper">
+      <div class="all-conneting-imgs" id="all-conneting-imgs-id"></div>
+      <div id="all-conneting-imgs-lines"></div>
+    </div>
   </div>
 
   <div style="height: 100dvh;"></div>
@@ -105,19 +158,20 @@
   <script>
     const ICONS = ['a.svg', 'adyen.svg', 'ai.svg', 'arrow.svg', 'aws.svg', 'bi.svg', 'cognos.svg', 'fis.svg', 'fiserv.svg', 'h.svg', 'jh.svg', 'lithic.svg', 'nacha.svg', 'ncino.svg', 'sardine.svg', 'snow.svg', 'stripe.svg', 'verafin.svg', 'visa.svg'];
     const BREAKPOINTS = {
-      320: [52, [115.6, 101.4, 176.6, 31.4, 12.6, 119.4, 250.6, 346.4, 1.6, 338.4, 202.6, 167.4, 116.6, 462.4, 10.6, 211.4, 98.6, 10.4, 251.6, 238.4, 105.6, 370.4, 12.6, 449.4, 255.6, 95.4, 111, 195, 179, 298, 72, 277, 8, 18, 247, 11, 241, 454]],
-      386: [52, [201.6, 190.4, 194.6, 78.4, 14.6, 216.4, 307.6, 394.4, 1.6, 338.4, 318.6, 76.4, 117.6, 490.4, 214.6, 394.4, 98.6, 10.4, 319.6, 292.4, 106.6, 391.4, 12.6, 449.4, 302.6, 181.4, 95, 152, 209, 298, 119, 291, 7, 81, 258, 15, 243, 488]],
-      433: [52, [212.6, 190.4, 194.6, 78.4, 14.6, 216.4, 370.6, 314.4, 1.6, 338.4, 313.6, 117.4, 117.6, 490.4, 344.6, 421.4, 98.6, 10.4, 369.6, 25.4, 164.6, 394.4, 12.6, 449.4, 344.6, 202.4, 95, 152, 239, 296, 119, 291, 7, 81, 258, 15, 252, 479]],
+      320: [55, [115.6, 101.4, 176.6, 31.4, 12.6, 119.4, 250.6, 346.4, 1.6, 338.4, 202.6, 167.4, 116.6, 462.4, 10.6, 211.4, 98.6, 10.4, 251.6, 238.4, 105.6, 370.4, 12.6, 449.4, 255.6, 95.4, 111, 195, 179, 298, 72, 277, 8, 18, 247, 11, 241, 454]],
+      386: [55, [201.6, 190.4, 194.6, 78.4, 14.6, 216.4, 307.6, 394.4, 1.6, 338.4, 318.6, 76.4, 117.6, 490.4, 214.6, 394.4, 98.6, 10.4, 319.6, 292.4, 106.6, 391.4, 12.6, 449.4, 302.6, 181.4, 95, 152, 209, 298, 119, 291, 7, 81, 258, 15, 243, 488]],
+      433: [58, [212.6, 190.4, 194.6, 78.4, 14.6, 216.4, 370.6, 314.4, 1.6, 338.4, 313.6, 117.4, 117.6, 490.4, 344.6, 421.4, 98.6, 10.4, 369.6, 25.4, 164.6, 394.4, 12.6, 449.4, 344.6, 202.4, 95, 152, 239, 296, 119, 291, 7, 81, 258, 15, 252, 479]],
       483: [64, [212.6, 190.4, 194.6, 78.4, 14.6, 216.4, 367.6, 343.4, 1.6, 338.4, 313.6, 117.4, 117.6, 490.4, 369.6, 460.4, 98.6, 10.4, 406.6, 29.4, 206.6, 395.4, 12.6, 449.4, 397.6, 207.4, 95, 152, 264, 294, 119, 291, 7, 81, 295, 14, 261, 492]],
-      558: [64, [212.6, 190.4, 194.6, 78.4, 15.6, 230.4, 383.6, 423.4, 1.6, 338.4, 311.6, 108.4, 209.6, 406.4, 431.6, 119.4, 98.6, 10.4, 434.6, 27.4, 284.6, 299.4, 63.6, 423.4, 336.6, 210.4, 95, 152, 416, 319, 154, 298, 5, 87, 295, 14, 477, 215]],
+      558: [70, [212.6, 190.4, 194.6, 78.4, 15.6, 230.4, 383.6, 423.4, 1.6, 338.4, 311.6, 108.4, 209.6, 406.4, 431.6, 119.4, 98.6, 10.4, 434.6, 27.4, 284.6, 299.4, 63.6, 423.4, 336.6, 210.4, 95, 152, 416, 319, 154, 298, 5, 87, 295, 14, 477, 215]],
       602: [75, [254.6, 207.4, 194.6, 78.4, 15.6, 230.4, 397.6, 437.4, 1.6, 338.4, 337.6, 115.4, 231.6, 401.4, 478.6, 123.4, 98.6, 10.4, 397.6, 22.4, 326.6, 303.4, 89.6, 425.4, 436.6, 218.4, 119, 176, 509, 7, 154, 298, 5, 87, 283, 14, 487, 325]],
       672: [75, [256.6, 180.4, 194.6, 78.4, 15.6, 230.4, 564.6, 253.4, 23.6, 350.4, 337.6, 115.4, 582.6, 115.4, 478.6, 123.4, 98.6, 10.4, 397.6, 22.4, 310.6, 308.4, 171.6, 379.4, 441.6, 237.4, 119, 153, 509, 7, 170, 262, 5, 87, 283, 14, 444, 360]],
       785: [75, [256.6, 180.4, 194.6, 78.4, 15.6, 230.4, 626.6, 49.4, 65.6, 332.4, 373.6, 130.4, 602.6, 211.4, 522.6, 113.4, 98.6, 10.4, 397.6, 22.4, 349.6, 271.4, 262.6, 355.4, 465.6, 214.4, 119, 153, 509, 7, 170, 262, 5, 87, 290, 7, 468, 336]],
-      828: [75, [321.6, 200.4, 237.6, 110.4, 15.6, 230.4, 673.6, 33.4, 60.6, 351.4, 481.6, 221.4, 683.6, 147.4, 542.6, 123.4, 121.6, 38.4, 389.6, 99.4, 429.6, 332.4, 309.6, 357.4, 622.6, 252.4, 137, 192, 509, 7, 183, 295, 5, 87, 290, 7, 561, 359]]
+      828: [80, [321.6, 200.4, 237.6, 110.4, 15.6, 230.4, 673.6, 33.4, 60.6, 351.4, 481.6, 221.4, 683.6, 147.4, 542.6, 123.4, 121.6, 38.4, 389.6, 99.4, 429.6, 332.4, 309.6, 357.4, 622.6, 252.4, 137, 192, 509, 7, 183, 295, 5, 87, 290, 7, 561, 359]]
     };
 
     const container = document.getElementById('all-conneting-imgs-id');
-    container.innerHTML = ICONS.map(src => `<div draggable="false"><img src="icons/${src}" draggable="false"></div>`).join('');
+    const allImgHtml = ICONS.map(src => `<div draggable="false"><img src="https://sadhinvr.github.io/identify/icons/${src}" draggable="false"></div>`).join('');
+    container.insertAdjacentHTML('afterbegin', allImgHtml)
 
     let dynamicStyles = "";
     Object.entries(BREAKPOINTS).forEach(([width, [size, coords]]) => {
@@ -130,7 +184,9 @@
     const styleTag = document.createElement('style');
     styleTag.textContent = dynamicStyles;
     setTimeout(() => document.head.appendChild(styleTag), 200);
+
   </script>
+
 
   <script>
     const CONNECTION_DATA = {
@@ -146,14 +202,25 @@
     };
 
     (function connectionEngine() {
+      // --- CONFIGURATION OPTIONS ---
+      const CONFIG = {
+        loopInterval: 3000,      // Time between scene changes
+      };
+
+      CONFIG.activationDelay = CONFIG.loopInterval * 0.2,
+      CONFIG.deactivationDelay = CONFIG.loopInterval * 0.7;
+      // -----------------------------
+
       const wrapper = document.getElementById('wrapper');
       const mainContainer = document.getElementById('all-conneting-imgs-id');
       const linesContainer = document.getElementById('all-conneting-imgs-lines');
       const nodes = mainContainer.querySelectorAll('div');
-      
+
       let loopTimer = null;
       let activeTimeouts = [];
       let isTransitioning = false;
+      let isVisible = false;
+      let startTimeout = null;
 
       const unpack = (val) => [val >> 8, val & 0xFF];
 
@@ -165,7 +232,8 @@
 
       const getLinks = (targetBP, scene) => {
         const links = new Set();
-        for (const bp of Object.keys(BREAKPOINTS).map(Number).sort((a, b) => a - b)) {
+        const sortedBPs = Object.keys(BREAKPOINTS).map(Number).sort((a, b) => a - b);
+        for (const bp of sortedBPs) {
           if (bp > targetBP) break;
           (CONNECTION_DATA[bp]?.[scene] || []).forEach(v => v > 0 ? links.add(v) : links.delete(-v));
         }
@@ -179,6 +247,8 @@
       };
 
       const render = () => {
+        if (!isVisible) return;
+
         linesContainer.innerHTML = '';
         if (!isTransitioning) clearState();
 
@@ -186,20 +256,179 @@
         const scene = window.currentScene || 0;
         if (!bp) return;
 
-        // Calculate positions RELATIVE to the line-icon-wrapper
         const wrapperRect = wrapper.getBoundingClientRect();
-
         const nodeData = Array.from(nodes).map(node => {
           const r = node.getBoundingClientRect();
-          return { 
-            cx: (r.left - wrapperRect.left) + r.width / 2, 
-            cy: (r.top - wrapperRect.top) + r.height / 2, 
-            r: r.width / 2 
+          return {
+            cx: (r.left - wrapperRect.left) + r.width / 2,
+            cy: (r.top - wrapperRect.top) + r.height / 2,
+            r: r.width / 2
           };
         });
 
         const fragment = document.createDocumentFragment();
         getLinks(bp, scene).forEach(([start, end]) => {
+          const a = nodeData[start], b = nodeData[end];
+          if (!a || !b) return;
+
+          const dx = b.cx - a.cx, dy = b.cy - a.cy;
+          const angle = Math.atan2(dy, dx);
+          const length = Math.hypot(dx, dy) - a.r - b.r + 2;
+
+          if (length > 0) {
+            const line = document.createElement('div');
+            line.className = 'connector';
+            Object.assign(line.style, {
+              width: `${length}px`,
+              left: `${a.cx + Math.cos(angle) * (a.r - 1)}px`,
+              top: `${a.cy + Math.sin(angle) * (a.r - 1)}px`,
+              transform: `rotate(${angle}rad)`
+            });
+            fragment.appendChild(line);
+
+            if (!isTransitioning) {
+              nodes[start].classList.add('active-node');
+              // Use CONFIG values here
+              activeTimeouts.push(setTimeout(() => nodes[end]?.classList.add('active-node'), CONFIG.activationDelay));
+              activeTimeouts.push(setTimeout(() => nodes[start]?.classList.remove('active-node'), CONFIG.deactivationDelay));
+            }
+          }
+        });
+        linesContainer.appendChild(fragment);
+      };
+
+      window.changeScene = (index) => {
+        if (!isVisible) return;
+        const bp = getActiveBP();
+        if (bp) {
+          window.currentScene = index % CONNECTION_DATA[bp].length;
+          render();
+        }
+      };
+
+      const resizeObserver = new ResizeObserver(() => {
+        if (!isVisible) return;
+        isTransitioning = true;
+        requestAnimationFrame(() => {
+          render();
+          setTimeout(() => { isTransitioning = false; render(); }, 500);
+        });
+      });
+
+      const visibilityObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            mainContainer.classList.remove('out-of-view');
+            startTimeout = setTimeout(() => {
+              isVisible = true;
+              render();
+            }, 100);
+          } else {
+            clearTimeout(startTimeout);
+            isVisible = false;
+            mainContainer.classList.add('out-of-view');
+            clearState();
+            linesContainer.innerHTML = '';
+          }
+        });
+      }, { threshold: 0.1 });
+
+      visibilityObserver.observe(mainContainer);
+      resizeObserver.observe(mainContainer);
+
+      loopTimer = setInterval(() => {
+        if (isVisible) {
+          const bp = getActiveBP();
+          if (bp) window.changeScene(((window.currentScene || 0) + 1) % CONNECTION_DATA[bp].length);
+        }
+      }, CONFIG.loopInterval); // Use CONFIG value here
+
+    })();
+  </script>
+
+
+
+</body>
+
+</html>
+
+
+<!-- 
+
+
+
+// container.insertAdjacentHTML('beforeend',
+//   `<img id="connetedImg" src="2.svg" style="max-width:100%;position:absolute;left:0px;top:calc(100% + 200px)"/> `);
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+
+    /*
+
+    // Register GSAP once at the top level
+    if (typeof gsap !== 'undefined') gsap.registerPlugin(ScrollTrigger);
+
+    (function connectionEngine() {
+      // --- Configuration & Selectors ---
+      const wrapper = document.getElementById('wrapper');
+      const mainContainer = document.getElementById('all-conneting-imgs-id');
+      const linesContainer = document.getElementById('all-conneting-imgs-lines');
+      const nodes = mainContainer.querySelectorAll('div');
+
+      let loopTimer = null;
+      let activeTimeouts = [];
+      let isTransitioning = false;
+      window.currentScene = window.currentScene || 0;
+
+      // --- Core Logic Helpers ---
+      const unpack = (val) => [val >> 8, val & 0xFF];
+
+      const getActiveBP = () => {
+        const w = mainContainer.offsetWidth;
+        // Note: Ensure BREAKPOINTS is defined globally or inside this scope
+        const bps = Object.keys(BREAKPOINTS || {}).map(Number).sort((a, b) => a - b);
+        return w < bps[0] ? null : bps.filter(b => w >= b).pop();
+      };
+
+      const getLinks = (targetBP, scene) => {
+        const links = new Set();
+        const bps = Object.keys(BREAKPOINTS || {}).map(Number).sort((a, b) => a - b);
+        for (const bp of bps) {
+          if (bp > targetBP) break;
+          (CONNECTION_DATA[bp]?.[scene] || []).forEach(v => v > 0 ? links.add(v) : links.delete(-v));
+        }
+        return Array.from(links).map(unpack);
+      };
+
+      // --- State Management ---
+      const clearNodeClasses = () => {
+        nodes.forEach(el => el.classList.remove('active-node'));
+      };
+
+      const clearEngineState = () => {
+        activeTimeouts.forEach(clearTimeout);
+        activeTimeouts = [];
+        clearNodeClasses();
+      };
+
+      const render = () => {
+        linesContainer.innerHTML = '';
+        if (!isTransitioning) clearEngineState();
+
+        const bp = getActiveBP();
+        if (!bp) return;
+
+        const wrapperRect = wrapper.getBoundingClientRect();
+        const nodeData = Array.from(nodes).map(node => {
+          const r = node.getBoundingClientRect();
+          return {
+            cx: (r.left - wrapperRect.left) + r.width / 2,
+            cy: (r.top - wrapperRect.top) + r.height / 2,
+            r: r.width / 2
+          };
+        });
+
+        const fragment = document.createDocumentFragment();
+        getLinks(bp, window.currentScene).forEach(([start, end]) => {
           const a = nodeData[start], b = nodeData[end];
           if (!a || !b) return;
 
@@ -228,14 +457,32 @@
         linesContainer.appendChild(fragment);
       };
 
-      window.changeScene = (index) => {
+      // --- Controller Functions ---
+      const runNextScene = () => {
         const bp = getActiveBP();
-        if (bp) {
-          window.currentScene = index % CONNECTION_DATA[bp].length;
-          render();
-        }
+        if (!bp) return;
+        window.currentScene = (window.currentScene + 1) % CONNECTION_DATA[bp].length;
+        render();
       };
 
+      const startEngine = () => {
+        if (loopTimer) return;
+        gsap.to(".connector", { opacity: 1, duration: 0.5 });
+        runNextScene(); // Start immediately
+        loopTimer = setInterval(runNextScene, 4000);
+        nodes.forEach((cur, i) => cur.classList.remove('nextanimenode'))
+      };
+
+      const stopEngine = () => {
+        clearInterval(loopTimer);
+        loopTimer = null;
+        clearEngineState();
+        gsap.to(".connector", { opacity: 0, duration: 0.5 });
+        nodes.forEach((cur, i) => cur.classList.add('nextanimenode'))
+
+      };
+
+      // --- Event Listeners ---
       const handleResize = () => {
         isTransitioning = true;
         let start = null;
@@ -250,15 +497,120 @@
 
       new ResizeObserver(handleResize).observe(mainContainer);
 
-      setTimeout(() => {
-        render();
-        loopTimer = setInterval(() => {
-          const bp = getActiveBP();
-          if (bp) window.changeScene(((window.currentScene || 0) + 1) % CONNECTION_DATA[bp].length);
-        }, 4000);
-      }, 600);
-    })();
-  </script>
-</body>
+      // Initial Start
+      setTimeout(startEngine, 600);
 
-</html>
+      // --- ScrollTrigger Integration ---
+
+      const trackImg = document.getElementById('connetedImg');
+
+      let nodeData = [];
+      let hasStopped = false;
+
+      ScrollTrigger.create({
+        trigger: wrapper,
+        start: "top 100px",
+        end: "bottom 200px",
+        markers: true,
+        onEnter: () => {
+          // 1. Recalculate coordinates every time we enter
+          const wrapperRect = wrapper.getBoundingClientRect();
+          const targetRect = trackImg.getBoundingClientRect();
+          const targetX = (targetRect.left - wrapperRect.left) + targetRect.width / 2;
+          const targetY = (targetRect.top - wrapperRect.top) + targetRect.height / 2;
+
+          nodeData = Array.from(nodes).map(node => {
+            // Force disable CSS transitions during scroll mode
+            node.style.transition = 'none';
+
+            const r = node.getBoundingClientRect();
+            const currentX = (r.left - wrapperRect.left) + r.width / 2;
+            const currentY = (r.top - wrapperRect.top) + r.height / 2;
+
+            return {
+              el: node,
+              moveX: targetX - currentX,
+              moveY: targetY - currentY
+            };
+          });
+        },
+        onUpdate: (self) => {
+          const p = self.progress;
+
+          // --- PHASE 1: ENGINE TOGGLE (Safe for fast scroll) ---
+          // If progress is low, engine should be RUNNING.
+          if (p < 0.10) {
+            if (hasStopped) {
+              hasStopped = false;
+              // Clean up everything for the auto-engine
+              nodes.forEach(node => {
+                gsap.set(node, { x: 0, y: 0, clearProps: "transform" });
+                node.style.transition = ''; // Restore CSS transitions for the hover effects
+              });
+              startEngine();
+            }
+          }
+          // If progress is high, engine should be STOPPED.
+          else {
+            if (!hasStopped) {
+              hasStopped = true;
+              stopEngine();
+              // Ensure transitions are off while moving
+              nodes.forEach(node => node.style.transition = 'none');
+            }
+          }
+
+          // --- PHASE 2: 1:1 SCROLL TIMELINE (15% - 65%) ---
+          let moveProgress = 0;
+          if (p >= 0.15 && p <= 0.65) {
+            moveProgress = (p - 0.15) / (0.65 - 0.15);
+          } else if (p > 0.65) {
+            moveProgress = 1;
+          }
+
+          // Only move if we are past the 15% mark and engine is stopped
+          if (hasStopped) {
+            nodeData.forEach(node => {
+              // use gsap.set (instant) for 1:1 scroll tracking
+              gsap.set(node.el, {
+                x: node.moveX * moveProgress,
+                y: node.moveY * moveProgress,
+                overwrite: true
+              });
+            });
+          }
+        },
+        onLeaveBack: () => {
+          // Complete reset for fast scroll back
+          hasStopped = false;
+          stopEngine(); // Just in case
+          nodes.forEach(node => {
+            gsap.set(node, { x: 0, y: 0, clearProps: "all" });
+            node.style.transition = '';
+          });
+          startEngine();
+        }
+      });
+      // Public API
+      window.changeScene = (index) => {
+        const bp = getActiveBP();
+        if (bp) {
+          window.currentScene = index % CONNECTION_DATA[bp].length;
+          render();
+        }
+      };
+    })();
+
+    // ScrollTrigger.create({
+    //   trigger: '#wrapper',
+    //   start: "top 100px",
+    //   end:'bottom',
+    //   markers: true,
+
+    // });
+
+
+    */
+
+
+-->
