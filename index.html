@@ -12,16 +12,21 @@
       margin: 0;
     }
 
-    .imgs {
-      height: 600px;
+    .line-icon-wrapper {
       position: relative;
-      background: rgba(255, 255, 255, 0.2);
-      overflow: hidden;
-      container-type: inline-size;
-      container-name: iconbox;
     }
 
-    .imgs>div {
+    .all-conneting-imgs {
+      height: 600px;
+      container-type: inline-size;
+      container-name: iconbox;
+      z-index: 12;
+      position: relative; /* Ensure child absolute positioning works */
+    }
+
+    
+/* ========= lineIcons custom css ========= */
+    .all-conneting-imgs>div {
       display: flex;
       align-items: center;
       justify-content: center;
@@ -41,15 +46,26 @@
       cursor: pointer;
     }
 
-    .imgs>div.active-node,
-    .imgs>div:hover {
+    .all-conneting-imgs>div.active-node,
+    .all-conneting-imgs>div:hover {
       transform: scale(1.1);
       filter: saturate(1);
     }
 
-    .imgs>div>img {
+    .all-conneting-imgs>div>img {
       max-width: 80%;
       max-height: 60%;
+    }
+
+    /* Fixed Line Container */
+    #all-conneting-imgs-lines {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 10;
     }
 
     .connector {
@@ -62,37 +78,30 @@
       pointer-events: none;
       animation: moveGradient 4s linear infinite;
       will-change: transform, width;
-      z-index: 10;
     }
 
     @keyframes moveGradient {
-      0% {
-        background-position: 200% 0%;
-      }
-
-      32% {
-        background-position: 100% 0%;
-      }
-
-      48% {
-        background-position: 50% 0%;
-      }
-
-      64% {
-        background-position: 0% 0%;
-      }
-
-      100% {
-        background-position: -100% 0%;
-      }
+      0% { background-position: 200% 0%; }
+      32% { background-position: 100% 0%; }
+      48% { background-position: 50% 0%; }
+      64% { background-position: 0% 0%; }
+      100% { background-position: -100% 0%; }
     }
   </style>
 </head>
 
 <body>
+  <div class="" style="height: 100dvh; display: flex; align-items: center; justify-content: center;">
+    <h1>Scroll Down</h1>
+  </div>
 
-  <div class="imgs" id="main-container"></div>
-  <div id="lines-container"></div>
+  <div class="line-icon-wrapper" id="wrapper">
+    <div class="all-conneting-imgs" id="all-conneting-imgs-id"></div>
+    <div id="all-conneting-imgs-lines"></div>
+  </div>
+
+  <div style="height: 100dvh;"></div>
+
   <script>
     const ICONS = ['a.svg', 'adyen.svg', 'ai.svg', 'arrow.svg', 'aws.svg', 'bi.svg', 'cognos.svg', 'fis.svg', 'fiserv.svg', 'h.svg', 'jh.svg', 'lithic.svg', 'nacha.svg', 'ncino.svg', 'sardine.svg', 'snow.svg', 'stripe.svg', 'verafin.svg', 'visa.svg'];
     const BREAKPOINTS = {
@@ -107,17 +116,14 @@
       828: [75, [321.6, 200.4, 237.6, 110.4, 15.6, 230.4, 673.6, 33.4, 60.6, 351.4, 481.6, 221.4, 683.6, 147.4, 542.6, 123.4, 121.6, 38.4, 389.6, 99.4, 429.6, 332.4, 309.6, 357.4, 622.6, 252.4, 137, 192, 509, 7, 183, 295, 5, 87, 290, 7, 561, 359]]
     };
 
-    const container = document.getElementById('main-container');
-
-    // Generate Icon Nodes
+    const container = document.getElementById('all-conneting-imgs-id');
     container.innerHTML = ICONS.map(src => `<div draggable="false"><img src="icons/${src}" draggable="false"></div>`).join('');
 
-    // Generate CSS via DRY loop
     let dynamicStyles = "";
     Object.entries(BREAKPOINTS).forEach(([width, [size, coords]]) => {
-      let rules = `.imgs>div{width:${size}px;height:${size}px}`;
+      let rules = `.all-conneting-imgs>div{width:${size}px;height:${size}px}`;
       for (let i = 0; i < coords.length; i += 2) {
-        rules += `.imgs>div:nth-child(${i / 2 + 1}){left:${coords[i]}px;top:${coords[i + 1]}px}`;
+        rules += `.all-conneting-imgs>div:nth-child(${i / 2 + 1}){left:${coords[i]}px;top:${coords[i + 1]}px}`;
       }
       dynamicStyles += `@container iconbox (min-width:${width}px){${rules}}`;
     });
@@ -140,8 +146,11 @@
     };
 
     (function connectionEngine() {
-      const mainContainer = document.getElementById('main-container');
-      const nodes = mainContainer.querySelectorAll('.imgs > div');
+      const wrapper = document.getElementById('wrapper');
+      const mainContainer = document.getElementById('all-conneting-imgs-id');
+      const linesContainer = document.getElementById('all-conneting-imgs-lines');
+      const nodes = mainContainer.querySelectorAll('div');
+      
       let loopTimer = null;
       let activeTimeouts = [];
       let isTransitioning = false;
@@ -170,16 +179,23 @@
       };
 
       const render = () => {
-        document.querySelectorAll('.connector').forEach(n => n.remove());
+        linesContainer.innerHTML = '';
         if (!isTransitioning) clearState();
 
         const bp = getActiveBP();
         const scene = window.currentScene || 0;
         if (!bp) return;
 
+        // Calculate positions RELATIVE to the line-icon-wrapper
+        const wrapperRect = wrapper.getBoundingClientRect();
+
         const nodeData = Array.from(nodes).map(node => {
           const r = node.getBoundingClientRect();
-          return { cx: r.left + r.width / 2 + window.scrollX, cy: r.top + r.height / 2 + window.scrollY, r: r.width / 2 };
+          return { 
+            cx: (r.left - wrapperRect.left) + r.width / 2, 
+            cy: (r.top - wrapperRect.top) + r.height / 2, 
+            r: r.width / 2 
+          };
         });
 
         const fragment = document.createDocumentFragment();
@@ -193,7 +209,7 @@
 
           if (length > 0) {
             const line = document.createElement('div');
-            line.className = 'connector directional-line';
+            line.className = 'connector';
             Object.assign(line.style, {
               width: `${length}px`,
               left: `${a.cx + Math.cos(angle) * (a.r - 1)}px`,
@@ -204,12 +220,12 @@
 
             if (!isTransitioning) {
               nodes[start].classList.add('active-node');
-              activeTimeouts.push(setTimeout(() => nodes[end].classList.add('active-node'), 1280));
-              activeTimeouts.push(setTimeout(() => nodes[start].classList.remove('active-node'), 2560));
+              activeTimeouts.push(setTimeout(() => nodes[end]?.classList.add('active-node'), 1280));
+              activeTimeouts.push(setTimeout(() => nodes[start]?.classList.remove('active-node'), 2560));
             }
           }
         });
-        document.getElementById('lines-container').appendChild(fragment);
+        linesContainer.appendChild(fragment);
       };
 
       window.changeScene = (index) => {
@@ -233,7 +249,6 @@
       };
 
       new ResizeObserver(handleResize).observe(mainContainer);
-      window.addEventListener('scroll', render);
 
       setTimeout(() => {
         render();

@@ -4,17 +4,2269 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+    rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <title>Document</title>
+  <style>
+    .dashboard-asset {
+      color: #000;
+      width: 935.5px;
+      min-width: 935.5px;
+      padding-top: 15px;
+      padding-bottom: 15px;
+      padding-right: 14px;
+      line-height: 1em;
+      position: relative;
+    }
+
+    .dash-a-user {
+      width: 23px;
+    }
+
+    .dash-a-header {
+      background-color: #fff;
+      border-radius: 3px;
+      justify-content: space-between;
+      margin-left: 88px;
+      padding: 10px;
+      display: flex;
+      box-shadow: 0 0px 20px rgba(0, 0, 0, 0.1);
+
+    }
+
+    .dash-a-user-txt {
+      margin-top: .25em;
+      font-size: 9px;
+      font-weight: 700;
+      line-height: 1em;
+    }
+
+    .dash-a-user-wrapper {
+      grid-column-gap: 8px;
+      grid-row-gap: 8px;
+      justify-content: flex-start;
+      align-items: center;
+      display: flex;
+    }
+
+    .dash-a-nav-wrapper {
+      grid-column-gap: 64px;
+      grid-row-gap: 64px;
+      justify-content: flex-start;
+      align-items: center;
+      display: flex;
+    }
+
+    .dash-a-nav {
+      grid-column-gap: 10px;
+      grid-row-gap: 10px;
+      display: flex;
+    }
+
+    .dash-a-navlink {
+      color: #4d4d4d;
+      text-transform: capitalize;
+      font-size: 10px;
+      font-weight: 700;
+      line-height: 1em;
+    }
+
+    .dash-a-navlink.active {
+      color: #1d83ec;
+    }
+
+    .dash-a-bg {
+      z-index: -2;
+      pointer-events: none;
+      background-color: #f9f9f9ca;
+      border-radius: 16px;
+      position: absolute;
+      inset: 0 0 0 74px;
+      /* glass effect with inset border */
+      box-shadow: inset 0 0 0 1px #ffffff80;
+    }
+
+    .dash-a-main {
+      position: relative;
+      z-index: 1;
+      grid-column-gap: 20px;
+      grid-row-gap: 20px;
+      grid-template-rows: auto;
+      grid-template-columns: minmax(200px, 209px) minmax(200px, 335px) 1fr;
+      grid-auto-columns: 1fr;
+      margin-top: 18px;
+      display: grid;
+    }
+
+    .dash-a-main-left,
+    .dash-a-main-middle {
+      grid-column-gap: 20px;
+      grid-row-gap: 20px;
+      flex-flow: column;
+      display: flex;
+    }
+
+    .dash-a-main-right {
+      grid-column-gap: 24px;
+      grid-row-gap: 24px;
+      text-align: center;
+      flex-flow: column;
+      display: flex;
+    }
+
+    .dash-a-main-left-box {
+      background-color: #fff;
+      border-radius: 5px;
+      box-shadow: 0 1px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    .dash-a-left-h {
+      text-align: center;
+      margin-top: 0;
+      margin-bottom: 0;
+      font-size: 12px;
+      line-height: 1em;
+    }
+
+    .dash-a-left-h-wrapper {
+      border-bottom: .05px solid #ccc;
+      padding-top: 8px;
+      padding-bottom: 8px;
+    }
+
+    .sla-graph {
+      height: 55px;
+    }
+
+    .sla-data-row {
+      border-bottom: .5px solid #ccc;
+      border-radius: .5px;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 20px 6px 14px;
+      display: flex;
+    }
+
+    .sla-data-row.no-border {
+      border-bottom-style: none;
+      border-bottom-width: 0;
+    }
+
+    .sla-data-h3 {
+      margin-top: 0;
+      margin-bottom: 0;
+      font-size: 10px;
+      font-weight: 500;
+      line-height: 1em;
+    }
+
+    .sla-data-line {
+      background-color: #1d83ec;
+      border-radius: 20px;
+      width: 19.5px;
+      height: 3.5px;
+    }
+
+    .sla-data-line._1 {
+      background-color: #3743d6;
+    }
+
+    .sla-data-line._3 {
+      background-color: #afb5aa;
+    }
+
+    .sla-data-line._2 {
+      background-color: #da429e;
+    }
+
+    .sla-percent-txt {
+      color: #1d83ec;
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .sla-percent-txt._1 {
+      color: #3743d6;
+    }
+
+    .sla-data-line-wrapper {
+      grid-column-gap: 6px;
+      grid-row-gap: 6px;
+      justify-content: flex-start;
+      align-items: center;
+      display: flex;
+    }
+
+    .codeacc-pie-graph {
+      height: 56px;
+    }
+
+    .codeacc-data-row {
+      border-bottom: .5px solid #ccc;
+      border-radius: .5px;
+      justify-content: space-between;
+      align-items: center;
+      padding: 3px 20px 3px 14px;
+      display: flex;
+    }
+
+    .codeacc-data-row.no-border {
+      border-bottom-style: none;
+      border-bottom-width: 0;
+    }
+
+    .codeacc-percent-txt {
+      color: #1d83ec;
+      width: 46px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .codeacc-percent-txt._1 {
+      color: #3743d6;
+    }
+
+    .codeacc-percent-txt._3 {
+      color: #858981;
+    }
+
+    .codeacc-percent-txt._2 {
+      color: #da429e;
+    }
+
+    .codeacc-data-h3 {
+      margin-top: 0;
+      margin-bottom: 0;
+      font-size: 10px;
+      font-weight: 700;
+      line-height: 1em;
+    }
+
+    .comp-barchart {
+      height: 120px;
+    }
+
+    .cumulaive-score-graph {
+      height: 98px;
+      margin-bottom: 30px;
+    }
+
+    .cumulative-score {
+      background-color: #fff;
+      border-radius: 5px;
+      padding: 16px 16px 18px;
+      box-shadow: 0 1px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    .cumulative-s-data {
+      grid-column-gap: 6px;
+      grid-row-gap: 6px;
+      text-align: center;
+      grid-template-rows: auto;
+      grid-template-columns: 1fr 1fr 1fr;
+      grid-auto-columns: 1fr;
+      display: grid;
+    }
+
+    .cumu-s-col {
+      background-color: #f9f9f9;
+      border-radius: 4px;
+      padding: 12px 5px;
+    }
+
+    .cumu-s-h {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .cumu-s-txt {
+      color: #1b83ec;
+      margin-top: 10px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .codeacc-data {
+      padding-bottom: 2px;
+    }
+
+    .scoretimeline-chart-box {
+      flex: 1;
+      padding: 11px 8px 14px 5px;
+
+      box-shadow: 0 1px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    .scroretimeline-h {
+      text-align: center;
+      margin-top: 0;
+      margin-bottom: 5px;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1em;
+    }
+
+    .scoretimeline-chart-wrapper {
+      justify-content: flex-start;
+      align-items: center;
+      display: flex;
+    }
+
+    .scroretimeline-value-h {
+      color: #848484;
+      text-align: center;
+      font-size: 8.5px;
+      display: inline-block;
+      transform: rotate(-90deg);
+    }
+
+    .compli-sc-indi {
+      justify-content: center;
+      align-items: center;
+      display: flex;
+    }
+
+    .compli-sc-indi-txt {
+      font-size: 7px;
+      font-weight: 700;
+    }
+
+    .dash-a-right-box {
+      box-shadow: 0 1px 10px rgba(0, 0, 0, 0.05);
+      grid-column-gap: 5px;
+      grid-row-gap: 5px;
+      background-color: #fff;
+      border-radius: 5px;
+      grid-template-rows: auto;
+      grid-template-columns: 1fr 0.8fr 1fr;
+      grid-auto-columns: 1fr;
+      justify-content: space-between;
+      align-items: center;
+      padding: 19px 18px 19px 13px;
+      display: grid;
+      height: 77px;
+      align-items: center;
+      align-content: center;
+    }
+
+    .das-rght-heading {
+      margin-top: 0;
+      margin-bottom: 0;
+      font-size: 15px;
+      line-height: 1em;
+    }
+
+    .das-rght-heading2 {
+      color: #6b7b91;
+      margin-top: 4px;
+      font-size: 8px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .das-rght-datas {
+      grid-column-gap: 6px;
+      grid-row-gap: 6px;
+      display: flex;
+    }
+
+    .das-right-data-value {
+      font-size: 10px;
+      font-weight: 400;
+      width: 28px;
+    }
+
+    .das-right-data-h {
+      color: #0568a0;
+      margin-top: 5px;
+      font-size: 7px;
+    }
+
+    .right-side-box-chart {
+      width: 85px;
+      height: 35px;
+    }
+  </style>
+</head>
+
+<head>
+  <style>
+    .wf-force-outline-none[tabindex="-1"]:focus {
+      outline: none;
+    }
+  </style>
+  <meta charset="utf-8">
+  <title>home-copy</title>
+  <meta
+    content="Learn how iDENTIFY's Data Engineering services transform banking data management with efficient data warehousing, ETL, and visualization solutions."
+    name="description">
+  <meta content="home-copy" property="og:title">
+  <meta
+    content="Learn how iDENTIFY's Data Engineering services transform banking data management with efficient data warehousing, ETL, and visualization solutions."
+    property="og:description">
+  <meta content="home-copy" property="twitter:title">
+  <meta
+    content="Learn how iDENTIFY's Data Engineering services transform banking data management with efficient data warehousing, ETL, and visualization solutions."
+    property="twitter:description">
+  <meta property="og:type" content="website">
+  <meta content="summary_large_image" name="twitter:card">
+  <meta content="width=device-width, initial-scale=1" name="viewport">
+  <link href="https://cdn.prod.website-files.com/6712a1f590c2a6ccd1074e2c/css/identify-v2.shared.8e1d6bfe6.css"
+    rel="stylesheet" type="text/css">
+  <script type="text/javascript" async="" src="https://snap.licdn.com/li.lms-analytics/insight.min.js"></script>
+  <script type="text/javascript" async="" src="https://snap.licdn.com/li.lms-analytics/insight.min.js"></script>
+  <script src="https://js-na2.hubspot.com/web-interactives-embed.js" type="text/javascript"
+    id="hubspot-web-interactives-loader" crossorigin="anonymous" data-loader="hs-scriptloader"
+    data-hsjs-portal="242025448" data-hsjs-env="prod" data-hsjs-hublet="na2"></script>
+  <script src="https://js-na2.hs-banner.com/v2/242025448/banner.js" type="text/javascript" id="cookieBanner-242025448"
+    data-cookieconsent="ignore" data-hs-ignore="true" data-loader="hs-scriptloader" data-hsjs-portal="242025448"
+    data-hsjs-env="prod" data-hsjs-hublet="na2"></script>
+  <script src="https://js-na2.hs-analytics.net/analytics/1766659800000/242025448.js" type="text/javascript"
+    id="hs-analytics"></script>
+  <script src="https://js-na2.hscollectedforms.net/collectedforms.js" type="text/javascript"
+    id="CollectedForms-242025448" crossorigin="anonymous" data-leadin-portal-id="242025448" data-leadin-env="prod"
+    data-loader="hs-scriptloader" data-hsjs-portal="242025448" data-hsjs-env="prod" data-hsjs-hublet="na2"></script>
+  <script src="https://js-na2.hsadspixel.net/fb.js" type="text/javascript" id="hs-ads-pixel-242025448"
+    data-ads-portal-id="242025448" data-ads-env="prod" data-loader="hs-scriptloader" data-hsjs-portal="242025448"
+    data-hsjs-env="prod" data-hsjs-hublet="na2"></script>
+  <script async="" src="https://www.googletagmanager.com/gtm.js?id=GTM-N8RDXG4J"></script>
+  <script
+    type="text/javascript">!function (o, c) { var n = c.documentElement, t = " w-mod-"; n.className += t + "js", ("ontouchstart" in o || o.DocumentTouch && c instanceof DocumentTouch) && (n.className += t + "touch") }(window, document);</script>
+  <link href="https://cdn.prod.website-files.com/6712a1f590c2a6ccd1074e2c/6718d5082ba1e4f2647fd180_Favicon.png"
+    rel="shortcut icon" type="image/x-icon">
+  <link href="https://cdn.prod.website-files.com/6712a1f590c2a6ccd1074e2c/6718d512003a9173ba0dd39e_Logo-Icon-256.png"
+    rel="apple-touch-icon">
+  <link href="https://www.goidentify.com/home-copy" rel="canonical"><!-- Google Tag Manager -->
+  <script>(function (w, d, s, l, i) {
+      w[l] = w[l] || []; w[l].push({
+        'gtm.start':
+          new Date().getTime(), event: 'gtm.js'
+      }); var f = d.getElementsByTagName(s)[0],
+        j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+          'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+    })(window, document, 'script', 'dataLayer', 'GTM-N8RDXG4J');</script>
+  <!-- End Google Tag Manager -->
+  <!-- Google tag (gtag.js) -->
+  <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-WBXFE3ZHEQ">
+  </script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+
+    gtag('config', 'G-WBXFE3ZHEQ');
+  </script>
+  <style>
+    .text-slider {
+      display: inline-flex;
+
+    }
+
+    h1 {
+      display: flex;
+
+    }
+
+    .text-slider-letter {
+      display: inline-block;
+    }
+
+    .text-slider-word {
+      display: inline-block;
+      text-align: center;
+
+    }
+
+    .text-slider-wraper {
+      display: inline-block;
+      overflow: hidden;
+      text-align: left;
+    }
+
+    .text-slider-swap {
+      display: inline-flex;
+      flex-direction: column;
+    }
+  </style>
+  <script
+    src="https://cdn.prod.website-files.com/6712a1f590c2a6ccd1074e2c%2F6544eda5f000985a163a8687%2F6945928c714e9f03de9019d1%2Ffinsweetcomponentsconfig-1.0.27.js"
+    type="module" async="" siteid="6712a1f590c2a6ccd1074e2c" finsweet="components"></script>
+  <style fs-components-cloak="cloak">
+    [fs-marquee-instance],
+    [fs-cnumbercount-instance] {
+      opacity: 0;
+    }
+
+    [fs-consent-element="internal-component"],
+    [fs-consent-element="banner"],
+    [fs-consent-element="fixed-preferences"],
+    [fs-consent-element="preferences"],
+    [fs-consent-element="interaction"] {
+      display: none
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@finsweet/fs-components@2/fs-components.js?v=1766661264226" type="module"
+    async=""
+    fs-components-src="https://cdn.prod.website-files.com/6712a1f590c2a6ccd1074e2c%2F6544eda5f000985a163a8687%2F6945928c714e9f03de9019d1%2Ffinsweetcomponentsconfig-1.0.27.js"
+    fs-components-installed="cnumbercount,marquee,slider,tabs"></script>
+  <style id="_goober">
+    .go2933276541 {
+      position: fixed;
+      display: block;
+      width: 100%;
+      height: 0px;
+      margin: 0px;
+      padding: 0px;
+      overflow: visible;
+      transform-style: preserve-3d;
+      background: transparent;
+      backface-visibility: hidden;
+      pointer-events: none;
+      left: 0px;
+      z-index: 9998;
+    }
+
+    .go2369186930 {
+      top: 0px;
+      z-index: 9999;
+      height: 100%;
+      width: 100%;
+    }
+
+    .go1348078617 {
+      bottom: 0px;
+    }
+
+    .go2417249464 {
+      position: fixed;
+      z-index: 9989;
+    }
+
+    .go3921366393 {
+      left: 0;
+      bottom: 0;
+    }
+
+    .go3967842156 {
+      right: 0;
+      bottom: 0;
+    }
+
+    .go613305155 {
+      left: 0;
+      top: 0;
+    }
+
+    .go471583506 {
+      right: 0;
+      top: 0;
+    }
+
+    .go3670563033 {
+      position: relative;
+      overflow: hidden;
+      display: none;
+    }
+
+    .go1041095097 {
+      display: block;
+    }
+
+    .go1632949049 {
+      position: absolute;
+      pointer-events: none;
+      width: 101vw;
+      height: 101vh;
+      background: rgba(0, 0, 0, 0.7);
+      opacity: 0;
+      z-index: -1;
+    }
+
+    .go2512015367 {
+      z-index: 99998;
+      opacity: 0.8;
+      visibility: visible;
+      pointer-events: all;
+      cursor: pointer;
+    }
+
+    .go1432718904 {
+      overflow: hidden;
+    }
+
+    .go812842568 {
+      display: block !important;
+      position: static !important;
+      box-sizing: border-box !important;
+      background: transparent !important;
+      border: none;
+      min-height: 0px !important;
+      max-height: none !important;
+      margin: 0px;
+      padding: 0px !important;
+      height: 100% !important;
+      width: 1px !important;
+      max-width: 100% !important;
+      min-width: 100% !important;
+    }
+
+    .go3064412225 {
+      z-index: 99999;
+      visibility: hidden;
+      position: absolute;
+      inset: 50vh auto auto 50%;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%) translateY(100vh);
+      pointer-events: none;
+      max-height: 95%;
+      max-width: 95%;
+    }
+
+    .go1656994552 {
+      pointer-events: auto !important;
+      visibility: visible;
+      transform: translate(-50%, -50%) translateY(0);
+      transition: transform 0.75s linear(0, 0.006, 0.023 2.2%, 0.096 4.8%, 0.532 15.4%, 0.72 21%, 0.793, 0.853 26.7%, 0.902, 0.941, 0.968 36.2%, 0.987 39.7%, 1 43.7%, 1.007 48.3%, 1.009 55.3%, 1.002 78.2%, 1);
+    }
+
+    .go456419034 {
+      transition: opacity 0.3s ease-in;
+    }
+
+    .go3128134379 {
+      pointer-events: auto !important;
+      visibility: visible !important;
+      max-height: 95vh !important;
+      transition: max-height 1s ease-in;
+    }
+
+    .go494047706 {
+      z-index: 9999;
+      width: 100%;
+      max-height: 95%;
+      position: fixed;
+      visibility: hidden;
+    }
+
+    .go2481764524 {
+      z-index: 9999;
+      width: 100%;
+      max-height: 95%;
+      position: fixed;
+      visibility: hidden;
+      bottom: 0px;
+    }
+
+    .go2685733372 {
+      visibility: hidden;
+    }
+
+    .go2985984737 {
+      visibility: visible !important;
+    }
+
+    .go3281949485 {
+      pointer-events: auto !important;
+      visibility: visible !important;
+      max-height: 95vh !important;
+      transform: none !important;
+    }
+
+    .go3508454897 {
+      z-index: 9999;
+      width: 100%;
+      max-height: 95%;
+      position: fixed;
+      visibility: hidden;
+      transition: transform 1s linear(0, 0.006, 0.022 2.3%, 0.091 5.1%, 0.18 7.6%, 0.508 16.3%, 0.607, 0.691, 0.762, 0.822 28.4%, 0.872, 0.912 35.1%, 0.944 38.9%, 0.968 43%, 0.985 47.6%, 0.996 53.1%, 1.001 58.4%, 1.003 65.1%, 1);
+    }
+
+    .go988075951 {
+      z-index: 9999;
+      position: fixed;
+      left: 10px;
+      top: 10px;
+      max-height: 95vh !important;
+      max-width: 95%;
+      visibility: hidden;
+    }
+
+    .go2699082514 {
+      z-index: 9999;
+      position: fixed;
+      right: 10px;
+      top: 10px;
+      max-height: 95vh !important;
+      max-width: 95%;
+      visibility: hidden;
+    }
+
+    .go1595992025 {
+      z-index: 9999;
+      position: fixed;
+      left: 10px;
+      bottom: 10px;
+      max-height: 95vh !important;
+      max-width: 95%;
+      visibility: hidden;
+    }
+
+    .go1222083472 {
+      z-index: 9999;
+      position: fixed;
+      right: 10px;
+      bottom: 10px;
+      max-height: 95vh !important;
+      max-width: 95%;
+      visibility: hidden;
+    }
+
+    .go722322694 {
+      transition: none !important;
+    }
+
+    .go26732895 {
+      cursor: pointer;
+    }
+
+    .go2083580917 {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  </style>
+  <style id="fs-tabs-base-styles">
+    .is-tab-hidden,
+    .is-tab-hidden {
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    /* Stack content items so active panel can be on top (disabled in Designer) */
+    html:not(.wf-design-mode) [fs-tabs-element="content"],
+    html:not(.wf-design-mode) [fs-tabs-element="content"] [role="list"] {
+      display: grid;
+    }
+
+    html:not(.wf-design-mode) [fs-tabs-element="content"]>*,
+    html:not(.wf-design-mode) [fs-tabs-element="content"] [role="listitem"] {
+      grid-area: 1 / 1;
+    }
+
+    html:not(.wf-design-mode) .is-content-active {
+      z-index: 1;
+    }
+  </style>
 </head>
 
 <body>
-  <div class="dashboard_asset">
-    <div class="dashboard_asset">
-      
+  <main class="" style="overflow: hidden;">
+    <div class="section service-hero">
+      <div class="padding-global">
+        <div class="container-large">
+          <div class="two-grid hero">
+            <div id="w-node-b30b9040-3bfb-3ff8-441d-183724701417-c8a66144" class="left-block mobile">
+              <h1 data-w-id="b30b9040-3bfb-3ff8-441d-18372470141a" class="home-hero-heading">Modernizing Bank Data to
+                unlock your future</h1>
+              <div data-w-id="b30b9040-3bfb-3ff8-441d-18372470141c" class="sub-heading-text">iDENTIFY helps banks unify
+                core systems, processors, and fintech partners into one governed data platform- giving you faster
+                insights, stronger compliance, and a foundation built for modern growth.</div>
+              <div class="two-button-block"><a href="/contact-us" data-w-id="b30b9040-3bfb-3ff8-441d-183724701421"
+                  class="hero-button w-inline-block"
+                  style="opacity: 1; transform: translate3d(0px, 0px, 0px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg); transform-style: preserve-3d;">
+                  <div>Book a discovery call</div>
+                  <div class="arrow-icons w-embed"><svg xmlns="http://www.w3.org/2000/svg" version="1.1"
+                      viewBox="0 0 30 30" fill="currentColor" width="100%" height="100%">
+                      <path
+                        d="M7.6704,1.4128l19.5164.0051c.2831-.0251.5729.0423.8204.202.006.006.0124.0101.0187.0143.0359.022.0707.048.1044.0758.0198.0172.0388.0337.0573.0507.0116.0104.0233.0216.0349.0332l.0332.0341c.0251.0267.0491.0544.0719.0832l-.1052-.1173c.0547.0547.1035.113.1464.1743.0227.0298.0437.0623.0632.0956.0101.0213.0208.0411.0309.0611.0661.1227.1109.259.1322.4029l.0141.1923-.0056,19.6266c-.0002.7188-.583,1.3013-1.3018,1.3011-.6534-.0002-1.1942-.4819-1.287-1.1095l-.0141-.1923.0032-16.4945L3.6822,28.1748c-.5082.5082-1.3323.5082-1.8405,0-.4659-.4659-.5047-1.1971-.1165-1.7072l.1165-.1333L24.1542,4.0192l-16.4846-.0035c-.6534-.0002-1.1942-.4819-1.287-1.1095l-.0141-.1923c.0002-.6534.4819-1.1942,1.1095-1.287l.1923-.0141Z">
+                      </path>
+                    </svg></div>
+                </a><a href="/contact-us" class="hero-button black w-inline-block"
+                  style="opacity: 1; transform: translate3d(0px, 0px, 0px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg); transform-style: preserve-3d;">
+                  <div>SEE a case study</div>
+                  <div class="arrow-icons w-embed"><svg xmlns="http://www.w3.org/2000/svg" version="1.1"
+                      viewBox="0 0 30 30" fill="currentColor" width="100%" height="100%">
+                      <path
+                        d="M7.6704,1.4128l19.5164.0051c.2831-.0251.5729.0423.8204.202.006.006.0124.0101.0187.0143.0359.022.0707.048.1044.0758.0198.0172.0388.0337.0573.0507.0116.0104.0233.0216.0349.0332l.0332.0341c.0251.0267.0491.0544.0719.0832l-.1052-.1173c.0547.0547.1035.113.1464.1743.0227.0298.0437.0623.0632.0956.0101.0213.0208.0411.0309.0611.0661.1227.1109.259.1322.4029l.0141.1923-.0056,19.6266c-.0002.7188-.583,1.3013-1.3018,1.3011-.6534-.0002-1.1942-.4819-1.287-1.1095l-.0141-.1923.0032-16.4945L3.6822,28.1748c-.5082.5082-1.3323.5082-1.8405,0-.4659-.4659-.5047-1.1971-.1165-1.7072l.1165-.1333L24.1542,4.0192l-16.4846-.0035c-.6534-.0002-1.1942-.4819-1.287-1.1095l-.0141-.1923c.0002-.6534.4819-1.1942,1.1095-1.287l.1923-.0141Z">
+                      </path>
+                    </svg></div>
+                </a></div>
+            </div>
 
 
+            <!-- ========================== -->
+            <div id="dashboard-stage" style="position: relative; width: 100%; overflow: hidden;">
+
+              <div class="dashboard-asset" id="dashboard-scaler"
+                style="position: absolute; top: 0; left: 0; transform-origin: top left;">
+                <div class="dash-a-bg"></div>
+                <div class="dash-a-header">
+                  <img
+                    src="https://cdn.prod.website-files.com/694b750b244db8ff9627eea2/694b89fbb75b2b06a7dd7856_logo.svg"
+                    loading="lazy" alt="">
+                  <div class="dash-a-nav-wrapper">
+                    <div class="dash-a-nav">
+                      <div class="dash-a-navlink active">Observe</div>
+                      <div class="dash-a-navlink">Insight</div>
+                      <div class="dash-a-navlink">Analytics</div>
+                      <div class="dash-a-navlink">suite</div>
+                      <div class="dash-a-navlink">Marketing</div>
+                      <div class="dash-a-navlink">hub</div>
+                    </div>
+                    <div class="dash-a-user-wrapper"><img
+                        src="https://cdn.prod.website-files.com/694b750b244db8ff9627eea2/694b8a58383ea568895d5749_lee.png"
+                        loading="lazy" alt="" class="dash-a-user">
+                      <div class="dash-a-user-txt">Lee Easton</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- dash asset main -->
+                <div class="dash-a-main">
+                  <div class="dash-a-main-left">
+                    <div class="dash-a-main-left-box">
+                      <div class="dash-a-left-h-wrapper">
+                        <h2 class="dash-a-left-h">SLACompliance</h2>
+                      </div>
+                      <div class="sla-graph" style="padding: 0 8px;">
+                        <canvas id="graph1"></canvas>
+
+                      </div>
+                      <div class="sla-data">
+                        <div class="sla-data-row">
+                          <h3 class="sla-data-h3">Date of Birth</h3>
+                          <div class="sla-data-line-wrapper">
+                            <div class="sla-data-line"></div>
+                            <div class="sla-percent-txt"><span id="sla-percent-txt-1">90</span>%</div>
+                          </div>
+                        </div>
+                        <div class="sla-data-row no-border">
+                          <h3 class="sla-data-h3">Social Security</h3>
+                          <div class="sla-data-line-wrapper">
+                            <div class="sla-data-line _1"></div>
+                            <div class="sla-percent-txt _1"><span id="sla-percent-txt-2">99</span>%</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="dash-a-main-left-box">
+                      <div class="dash-a-left-h-wrapper">
+                        <h2 class="dash-a-left-h">Zip CodeAccuracy</h2>
+                      </div>
+                      <div class="codeacc-pie-graph"
+                        style="display: flex; justify-content: center; align-items: center; padding-top:4px;">
+                        <canvas id="zip-piechart"> </canvas>
+                      </div>
+                      <div class="codeacc-data">
+                        <div class="codeacc-data-row">
+                          <h3 class="codeacc-data-h3">Accurate</h3>
+                          <div class="sla-data-line-wrapper">
+                            <div class="sla-data-line"></div>
+                            <div class="codeacc-percent-txt">
+                              <span id="zip-piechart-percent1">90</span>
+                              %
+                            </div>
+                          </div>
+                        </div>
+                        <div class="codeacc-data-row">
+                          <h3 class="codeacc-data-h3">Invalid</h3>
+                          <div class="sla-data-line-wrapper">
+                            <div class="sla-data-line _2"></div>
+                            <div class="codeacc-percent-txt _2">
+                              <span id="zip-piechart-percent2">90</span>
+                              %
+                            </div>
+                          </div>
+                        </div>
+                        <div class="codeacc-data-row no-border">
+                          <h3 class="codeacc-data-h3">Null</h3>
+                          <div class="sla-data-line-wrapper">
+                            <div class="sla-data-line _3"></div>
+                            <div class="codeacc-percent-txt _3">
+                              <span id="zip-piechart-percent3">90</span>
+                              %
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="dash-a-main-left-box">
+                      <div class="dash-a-left-h-wrapper">
+                        <h2 class="dash-a-left-h">Zip CodeAccuracy</h2>
+                      </div>
+                      <div class="comp-barchart">
+                        <canvas id="comp-barchart-id"> </canvas>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="dash-a-main-middle">
+                    <div class="cumulative-score">
+                      <div class="cumulaive-score-graph"
+                        style="position: relative;display: flex; justify-content: center; align-items: center;">
+                        <canvas id="gaugeChart"></canvas>
+                        <div
+                          style="position: absolute; top: 60%; left: 50%; transform: translate(-50%, -20%); text-align: center; width: 100%;">
+                          <div style="font-size: 21px; font-weight: bold; color: #1B83EC; line-height: 1;">
+                            <span id="gauge-percent"></span>
+                            %
+                          </div>
+                          <div style="font-size: 12px; font-weight: bold; color: #000; margin-top: 5px;">Cumulative
+                            Score</div>
+                        </div>
+                      </div>
+                      <div class="cumulative-s-data">
+                        <div class="cumu-s-col">
+                          <div class="cumu-s-h">
+                            <span id="cumu-s-value1"></span>
+                            K
+                          </div>
+                          <div class="cumu-s-txt">FILES</div>
+                        </div>
+                        <div class="cumu-s-col">
+                          <div class="cumu-s-h">
+                            <span id="cumu-s-value2"></span>M
+                          </div>
+                          <div class="cumu-s-txt">ROWS</div>
+                        </div>
+                        <div class="cumu-s-col">
+                          <div class="cumu-s-h">
+                            <span id="cumu-s-value3"></span>
+                            B
+                          </div>
+                          <div class="cumu-s-txt">FIELDS</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="scoretimeline-chart-box"
+                      style="background-color: #fff; border-radius: 4px; display: flex; flex-direction: column;">
+                      <h3 class="scroretimeline-h">ScoreTimeline</h3>
+                      <div class="scoretimeline-chart-wrapper " style="flex: 1;">
+                        <div class="scroretimeline-value-h" style="margin-right: -7px; margin-left: -5px;">Values</div>
+                        <div class="scroretimeline-chart" style="width: 100%;align-self: stretch;">
+                          <canvas id="monthlyTrendChart"></canvas>
+                        </div>
+                      </div>
+                      <div class="compli-sc-indi" style="gap: 3px;margin-top: 5px;">
+                        <div class="compli-sc-indi-icon"
+                          style="display: flex; align-items: center; justify-content: center; position: relative;">
+                          <div
+                            style="width: 3.6px; height: 3.6px; background: #D84279; border-radius: 50%; position: absolute;">
+                          </div>
+                          <div style="width: 8.6px; height: 1px; background: #D84279;border-radius: 4px;"></div>
+                        </div>
+                        <div class="compli-sc-indi-txt">Compliance Score</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="dash-a-main-right">
+
+                    <div class="dash-a-right-box">
+                      <div class="right-side-box-chart" style="min-height:45px;min-width:95px;">
+                        <canvas id="rightDonutChart1"></canvas>
+                      </div>
+
+                      <div class="das-rght-headings">
+                        <h3 class="das-rght-heading">Visa</h3>
+                        <div class="das-rght-heading2">Network</div>
+                      </div>
+
+                      <div class="das-rght-datas">
+                        <div class="das-rght-data">
+                          <div class="das-right-data-value das-right-data-value-num">199</div>
+                          <div class="das-right-data-h">FILES</div>
+                        </div>
+                        <div class="das-rght-data">
+                          <div class="das-right-data-value">
+                            <span class="das-right-data-value-num">34</span>M
+                          </div>
+                          <div class="das-right-data-h">ROWS</div>
+                        </div>
+                        <div class="das-rght-data">
+                          <div class="das-right-data-value">
+                            <span class="das-right-data-value-num">648</span>M
+                          </div>
+                          <div class="das-right-data-h">FIELDS</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="dash-a-right-box">
+                      <div class="right-side-box-chart" style="min-height:45px;min-width:95px;">
+                        <canvas id="rightDonutChart2"></canvas>
+                      </div>
+
+                      <div class="das-rght-headings">
+                        <h3 class="das-rght-heading">Jack Henry<br>Silverlake</h3>
+                        <div class="das-rght-heading2">Network</div>
+                      </div>
+
+                      <div class="das-rght-datas">
+                        <div class="das-rght-data">
+                          <div class="das-right-data-value das-right-data-value-num">389</div>
+                          <div class="das-right-data-h">FILES</div>
+                        </div>
+                        <div class="das-rght-data">
+                          <div class="das-right-data-value">
+                            <span class="das-right-data-value-num">57</span>M
+                          </div>
+                          <div class="das-right-data-h">ROWS</div>
+                        </div>
+                        <div class="das-rght-data">
+                          <div class="das-right-data-value">
+                            <span class="das-right-data-value-num">1</span>B
+                          </div>
+                          <div class="das-right-data-h">FIELDS</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="dash-a-right-box">
+                      <div class="right-side-box-chart" style="min-height:45px;min-width:95px;">
+                        <canvas id="rightDonutChart3"></canvas>
+                      </div>
+
+                      <div class="das-rght-headings">
+                        <h3 class="das-rght-heading">nCino</h3>
+                        <div class="das-rght-heading2">Customer Management</div>
+                      </div>
+
+                      <div class="das-rght-datas">
+                        <div class="das-rght-data">
+                          <div class="das-right-data-value das-right-data-value-num">198</div>
+                          <div class="das-right-data-h">FILES</div>
+                        </div>
+                        <div class="das-rght-data">
+                          <div class="das-right-data-value">
+                            <span class="das-right-data-value-num">1</span>M
+                          </div>
+                          <div class="das-right-data-h">ROWS</div>
+                        </div>
+                        <div class="das-rght-data">
+                          <div class="das-right-data-value">
+                            <span class="das-right-data-value-num">45</span>M
+                          </div>
+                          <div class="das-right-data-h">FIELDS</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="dash-a-right-box">
+                      <div class="right-side-box-chart" style="min-height:45px;min-width:95px;">
+                        <canvas id="rightDonutChart4"></canvas>
+                      </div>
+
+                      <div class="das-rght-headings">
+                        <h3 class="das-rght-heading">Banno</h3>
+                        <div class="das-rght-heading2">Digital Banking</div>
+                      </div>
+
+                      <div class="das-rght-datas">
+                        <div class="das-rght-data">
+                          <div class="das-right-data-value das-right-data-value-num">199</div>
+                          <div class="das-right-data-h">FILES</div>
+                        </div>
+                        <div class="das-rght-data">
+                          <div class="das-right-data-value">
+                            <span class="das-right-data-value-num">9</span>M
+                          </div>
+                          <div class="das-right-data-h">ROWS</div>
+                        </div>
+                        <div class="das-rght-data">
+                          <div class="das-right-data-value">
+                            <span class="das-right-data-value-num">161</span>M
+                          </div>
+                          <div class="das-right-data-h">FIELDS</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="dash-a-right-box">
+                      <div class="right-side-box-chart" style="min-height:45px;min-width:95px;">
+                        <canvas id="rightDonutChart5"></canvas>
+                      </div>
+
+                      <div class="das-rght-headings">
+                        <h3 class="das-rght-heading">FIS North</h3>
+                        <div class="das-rght-heading2">Processor</div>
+                      </div>
+
+                      <div class="das-rght-datas">
+                        <div class="das-rght-data">
+                          <div class="das-right-data-value das-right-data-value-num">398</div>
+                          <div class="das-right-data-h">FILES</div>
+                        </div>
+                        <div class="das-rght-data">
+                          <div class="das-right-data-value">
+                            <span class="das-right-data-value-num">19</span>M
+                          </div>
+                          <div class="das-right-data-h">ROWS</div>
+                        </div>
+                        <div class="das-rght-data">
+                          <div class="das-right-data-value">
+                            <span class="das-right-data-value-num">362</span>M
+                          </div>
+                          <div class="das-right-data-h">FIELDS</div>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+
+                </div>
+              </div>
+
+            </div>
+
+
+
+
+            <!-- ========================== -->
+          </div>
+        </div>
+      </div>
+      <div class="hero-background">
+        <div class="color-pattern _3"
+          style="opacity: 1; transform: translate3d(31.67%, 17.1018%, 0px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg); transform-style: preserve-3d; will-change: transform;">
+        </div>
+        <div class="color-pattern _4"
+          style="opacity: 1; transform: translate3d(0%, 0%, 0px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg); transform-style: preserve-3d;">
+        </div>
+        <div data-w-id="74639e49-65f9-d53b-6d12-aa86c74b18dd" class="color-pattern main"
+          style="transform: translate3d(70%, -57%, 0px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg); transform-style: preserve-3d;">
+        </div>
+        <div class="color-pattern _1"
+          style="opacity: 1; transform: translate3d(-52%, -66%, 0px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg); transform-style: preserve-3d;">
+        </div>
+        <div class="color-pattern _2"
+          style="opacity: 1; transform: translate3d(-44%, -75%, 0px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg); transform-style: preserve-3d;">
+        </div>
+      </div>
     </div>
-  </div>
+  </main>
+
+  <!-- <script>
+    function syncDashboardScale() {
+      const stage = document.getElementById('dashboard-stage');
+      const asset = document.getElementById('dashboard-scaler');
+      if (!stage || !asset) return;
+      const designWidth = 935.5;
+      const parentWidth = stage.offsetWidth;
+      const scale = parentWidth / designWidth;
+      asset.style.transform = `scale(${scale})`;
+      const originalHeight = asset.scrollHeight;
+      stage.style.height = (originalHeight * scale) + "px";
+    }
+
+    window.addEventListener('resize', syncDashboardScale);
+    window.addEventListener('load', syncDashboardScale);
+    setTimeout(syncDashboardScale, 300);
+
+    function animateValue(element, start, end, duration, precision = 0) {
+      let startTimestamp = null;
+      const step = (timestamp) => {
+        if (!startTimestamp) startTimestamp = timestamp;
+        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+
+        // Calculate current value
+        const current = progress * (end - start) + start;
+
+        // Use the precision prop (0 for integers, 2 for floats)
+        element.innerHTML = current.toFixed(precision);
+
+        if (progress < 1) {
+          window.requestAnimationFrame(step);
+        }
+      };
+      window.requestAnimationFrame(step);
+    }
+  </script> -->
+
+
+  <!-- 1st graph script -->
+  <!-- <script>
+    const ctx = document.getElementById('graph1').getContext('2d');
+    const possibleValue = [
+      [[12, 58, 20, 25, 10], [45, 15, 55, 5, 40]],
+      [[40, 10, 50, 15, 55], [10, 50, 15, 55, 20]],
+      [[55, 20, 40, 10, 30], [20, 45, 10, 58, 12]],
+      [[15, 45, 15, 45, 15], [50, 10, 50, 10, 50]],
+      [[30, 55, 12, 55, 30], [10, 30, 58, 30, 10]],
+      [[5, 25, 50, 25, 60], [55, 35, 10, 35, 5]],
+      [[60, 40, 20, 45, 10], [15, 30, 55, 10, 45]], 
+      [[10, 15, 12, 18, 14], [50, 55, 52, 58, 54]], 
+      [[20, 60, 20, 60, 20], [40, 10, 40, 10, 40]], 
+      [[5, 50, 5, 50, 5], [60, 10, 60, 10, 60]]     
+    ];
+
+    const createDataset = (label, data, color) => ({
+      label: label,
+      data: data,
+      borderColor: color,
+      pointBackgroundColor: color,
+      backgroundColor: 'transparent',
+      borderWidth: 2.5,
+      tension: 0.4,
+      borderCapStyle: 'round',
+
+      pointRadius: (context) => {
+        const index = context.dataIndex;
+        const lastIndex = context.dataset.data.length - 1;
+        return (index === 0 || index === lastIndex) ? 2 : 0;
+      }
+    });
+
+    // 2. Data Definition
+    const chartData = {
+      labels: [0, 1, 2, 3, 4],
+      datasets: [
+        createDataset('Deep Blue', possibleValue[0][0], '#3743D6'),
+        createDataset('Sky Blue', possibleValue[0][1], '#1D83EC')
+      ]
+    };
+
+    // 3. Configuration Object
+    const config = {
+      type: 'line',
+      data: chartData,
+      animation: {
+        duration: 3000,
+        easing: 'linear'
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          x: { display: false },
+          y: {
+            display: false,
+            min: 0,
+            max: 65
+          }
+        },
+      }
+    };
+
+    // 4. Initialization
+    const myChart = new Chart(ctx, config);
+
+    // 2. Infinite Scene Cycle
+    let currentScene = 0;
+    // percentage text
+
+    const percentageEle1 = document.getElementById('sla-percent-txt-1');
+    const percentageEle2 = document.getElementById('sla-percent-txt-2');
+
+    // Keep track of the previous values to animate "from" them
+    let prevVal1 = 99;
+    let prevVal2 = 90;
+
+    setInterval(() => {
+      currentScene = (currentScene + 1) % possibleValue.length;
+
+      // 1. Update Chart
+      myChart.data.datasets[0].data = possibleValue[currentScene][0];
+      myChart.data.datasets[1].data = possibleValue[currentScene][1];
+      myChart.update();
+
+      // 2. Define New Target Percentages
+      // You can pull these from your data or set them manually
+      const target1 = Math.floor(Math.random() * 10) + 89; 
+      const target2 = Math.floor(Math.random() * 5) + 88; 
+
+      // 3. Animate the Span Texts
+      animateValue(percentageEle1, prevVal1, target1, 1200);
+      animateValue(percentageEle2, prevVal2, target2, 1200);
+
+      // Save current targets as the next "start" values
+      prevVal1 = target1;
+      prevVal2 = target2;
+
+    }, 2000); // Changed back to 2500ms so the text has time to rest after animating
+
+
+
+
+
+  </script> -->
+
+
+  <!-- 2nd graph script -->
+  <!-- <script>
+    const ctx2 = document.getElementById('zip-piechart').getContext('2d');
+    const zipChartTxtEle1 = document.getElementById('zip-piechart-percent1');
+    const zipChartTxtEle2 = document.getElementById('zip-piechart-percent2');
+    const zipChartTxtEle3 = document.getElementById('zip-piechart-percent3');
+
+    // 1. Initial Data Values
+    let currentPieValues = [
+      33.24,
+      3.76,
+      63,
+    ];
+
+    animateValue(zipChartTxtEle1, 0, currentPieValues[2], 2000, 2);
+    animateValue(zipChartTxtEle2, 0, currentPieValues[1], 2000, 2);
+    animateValue(zipChartTxtEle3, 0, currentPieValues[0], 2000, 2);
+
+    const data = {
+      labels: ['accurate', 'invalid', 'null'],
+      datasets: [{
+        data: currentPieValues,
+        backgroundColor: [
+          '#B6BAB3',  // null (Grey)
+          '#DA429E', // invalid (Pink)
+          '#1D83EC', // accurate (Blue)
+        ],
+        borderWidth: 1,
+        hoverOffset: 0
+      }]
+    };
+
+    const config2 = {
+      type: 'pie',
+      data: data,
+      options: {
+        responsive: true,
+        events: [],
+        animation: {
+          duration: 1800,
+          easing: 'easeInOutQuart'
+        },
+        plugins: {
+          legend: { display: false },
+          title: { display: false },
+          tooltip: { enabled: false }
+        }
+      },
+    };
+
+    const myPieChart = new Chart(ctx2, config2);
+
+    // 2. Animation Logic
+    setInterval(() => {
+      // Generate random float values
+      const newAccurate = parseFloat((Math.random() * (80 - 60) + 60).toFixed(2));
+      const newInvalid = parseFloat((Math.random() * (7 - 2) + 2).toFixed(2));
+      const newNull = parseFloat((100 - (newAccurate + newInvalid)).toFixed(2));
+
+      const newValues = [
+        newNull,
+        newInvalid,
+        newAccurate,
+      ];
+
+      // Update Chart
+      myPieChart.data.datasets[0].data = newValues;
+      myPieChart.update();
+
+      // Update Text with precision prop set to 2
+      animateValue(zipChartTxtEle1, currentPieValues[2], newValues[2], 2000, 2);
+      animateValue(zipChartTxtEle2, currentPieValues[1], newValues[1], 2000, 2);
+      animateValue(zipChartTxtEle3, currentPieValues[0], newValues[0], 2000, 2);
+
+      currentPieValues = newValues;
+    }, 2500);
+
+  </script> -->
+
+
+  <!-- 3rd graph script -->
+
+  <!-- <script>
+    const ctx3 = document.getElementById('comp-barchart-id').getContext('2d');
+
+    // 1. Keep track of current values for the animateValue function
+    let currentVendorValues = [91, 90, 89, 89, 73];
+
+    const vendorData = {
+      labels: ['Jack Henry', 'Visa', 'Banno', 'nCino', 'FIS North'],
+      datasets: [{
+        data: [...currentVendorValues], // Initialize with a copy of default values
+        backgroundColor: ['#4377CB', '#9560D7', '#D6D6D6', '#F7E09A', '#9ACBBB'],
+        barThickness: 10,
+        borderRadius: 0,
+      }]
+    };
+
+    const config3 = {
+      type: 'bar',
+      data: vendorData,
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        // Smooth out the bar growth animation
+        animation: {
+          duration: 2000,
+          easing: 'easeInOutQuart'
+        },
+        layout: { padding: { right: 10 } },
+        plugins: {
+          legend: { display: false },
+          tooltip: { enabled: false }
+        },
+        scales: {
+          x: {
+            beginAtZero: true,
+            max: 100,
+            grid: { display: true, drawBorder: false, drawTicks: false, color: '#E0E0E0' },
+            ticks: {
+              stepSize: 20,
+              callback: value => value + '%',
+              font: { size: 5 },
+              padding: 5
+            }
+          },
+          y: {
+            grid: { display: true, drawBorder: true, drawTicks: false },
+            ticks: { color: '#000', font: { size: 7, weight: 'bold' }, padding: 5 }
+          }
+        }
+      },
+      plugins: [{
+        id: 'innerLabels',
+        afterDatasetsDraw(chart) {
+          const { ctx, data } = chart;
+          ctx.save();
+          ctx.font = '5px sans-serif';
+          ctx.fillStyle = '#000';
+          ctx.textAlign = 'right';
+          ctx.textBaseline = 'middle';
+          chart.getDatasetMeta(0).data.forEach((bar, index) => {
+            const value = data.datasets[0].data[index] + '%';
+            if (bar.width > 10) { // Lowered threshold since text is smaller
+              ctx.fillText(value, bar.x - 2, bar.y);
+            }
+          });
+        }
+      }]
+    };
+
+    const myVendorChart = new Chart(ctx3, config3);
+
+    // 2. Animation Logic to move to different values
+    setInterval(() => {
+      // Generate new random values (e.g., between 40 and 95)
+      const newValues = currentVendorValues.map(() =>
+        Math.floor(Math.random() * (95 - 40) + 40)
+      );
+
+      // Update Chart Bars
+      myVendorChart.data.datasets[0].data = newValues;
+      myVendorChart.update();
+      currentVendorValues = newValues;
+
+    }, 3000);
+  </script> -->
+
+  <!-- 4th graph script -->
+  <!-- <script>
+    const ctxGauge = document.getElementById('gaugeChart').getContext('2d');
+    const gaugeTextEle = document.getElementById('gauge-percent');
+
+    // 1. Initial State
+    let currentScore = 89.2;
+
+    const dataGauge = {
+      datasets: [{
+        // Start with currentScore, remaining is 100 - currentScore
+        data: [currentScore, 100 - currentScore],
+        backgroundColor: ['#1B83EC', '#D0D0D0'],
+        borderWidth: 0,
+        cutout: '70%',
+        borderRadius: 2,
+        spacing: 2,
+      }]
+    };
+
+    const configGauge = {
+      type: 'doughnut',
+      data: dataGauge,
+      options: {
+        rotation: -90,
+        circumference: 180,
+        responsive: true,
+        maintainAspectRatio: true,
+        aspectRatio: 1.8,
+        // Smooth the arc transition
+        animation: {
+          duration: 1200,
+          easing: 'easeInOutQuart'
+        },
+        plugins: {
+          legend: { display: false },
+          tooltip: { enabled: false }
+        },
+        events: []
+      }
+    };
+
+    const myGauge = new Chart(ctxGauge, configGauge);
+
+    animateValue(gaugeTextEle, 0, currentScore, 1200, 1);
+
+    // 2. Animation Loop
+    setInterval(() => {
+      // Generate a new random score (e.g., between 75.0 and 98.0)
+      const newScore = parseFloat((Math.random() * (98 - 75) + 75).toFixed(1));
+
+      // A. Update the Chart Arc
+      myGauge.data.datasets[0].data = [newScore, 100 - newScore];
+      myGauge.update();
+
+      // B. Update the Center Text using your global function
+      // Passing '1' as the precision prop for the .X decimal
+      animateValue(gaugeTextEle, currentScore, newScore, 1200, 1);
+
+      // C. Store the new value for the next transition
+      currentScore = newScore;
+
+    }, 3000); // Runs every 3 seconds
+
+
+
+    // 
+    // 
+
+    const filesEle = document.getElementById('cumu-s-value1');
+    const rowsEle = document.getElementById('cumu-s-value2');
+    const fieldsEle = document.getElementById('cumu-s-value3');
+
+    // 1. Set Initial Targets
+    let currentVals = [2.00, 126.00, 3.00];
+
+    // Initial load animation (starting from slightly below target)
+    animateValue(filesEle, 1.5, currentVals[0], 10000, 2);
+    animateValue(rowsEle, 125.5, currentVals[1], 10000, 2);
+    animateValue(fieldsEle, 2.5, currentVals[2], 10000, 2);
+
+    // 2. Slow, Incremental Update Logic
+    setInterval(() => {
+      const getTinyChange = (val, maxDiff) => {
+        const change = (Math.random() * (maxDiff * 2) - maxDiff);
+        const result = val + change;
+
+        // FIX: Math.max(0, result) ensures the number never goes below 0
+        return parseFloat(Math.max(0, result).toFixed(2));
+      };
+
+      // Apply tiny changes to current values
+      const newFiles = getTinyChange(currentVals[0], 0.5); // Reduced drift for smoother motion
+      const newRows = getTinyChange(currentVals[1], 0.50);
+      const newFields = getTinyChange(currentVals[2], 0.5);
+
+      const newVals = [newFiles, newRows, newFields];
+
+      // 3. Animate the drift over the full 10 seconds
+      animateValue(filesEle, currentVals[0], newVals[0], 10000, 2);
+      animateValue(rowsEle, currentVals[1], newVals[1], 10000, 2);
+      animateValue(fieldsEle, currentVals[2], newVals[2], 10000, 2);
+
+      // Save for next cycle
+      currentVals = newVals;
+
+    }, 10000);
+  </script> -->
+
+
+  <!-- 5th graph script -->
+
+  <!-- <script>
+    const ctxTrend = document.getElementById('monthlyTrendChart').getContext('2d');
+
+    const trendData = {
+      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+      datasets: [{
+        data: [88, 88, 88, 88, 88, 88, 88],
+        borderColor: '#D84279',
+        backgroundColor: 'transparent',
+        borderWidth: 2.5,
+        tension: 0,
+        pointBackgroundColor: '#D84279',
+        pointBorderColor: '#FFF',
+        pointBorderWidth: 0,
+        pointRadius: 2.4,
+        pointHoverRadius: 5
+      }]
+    };
+    const configTrend = {
+      type: 'line',
+      data: trendData,
+      options: {
+        // Animation settings to make transitions smooth
+        animation: {
+          duration: 1200,
+          easing: 'easeInOutQuart'
+        },
+        maintainAspectRatio: false,
+        events: [],
+        plugins: {
+          legend: { display: false },
+          tooltip: { enabled: false },
+          title: { display: false }
+        },
+        scales: {
+          x: {
+            offset: true,
+            grid: { display: false },
+            border: {
+              display: true,
+              color: '#000',
+              width: 1
+            },
+            ticks: {
+              font: { size: 7, weight: '600' },
+              color: '#333'
+            }
+          },
+          y: {
+            grid: {
+              color: '#E0E0E0',
+              tickBorderDash: [1, 5],
+              drawTicks: false,
+              drawBorder: false
+            },
+            border: {
+              display: false,
+              dash: [5, 5]
+            },
+            ticks: {
+              display: true,
+              color: '#333',
+              font: { size: 7 },
+              padding: 10,
+              stepSize: 0.5,
+              maxTicksLimit: 6,
+              callback: function (value) {
+                return value.toFixed(1);
+              }
+            },
+            min: 88,
+            max: 90.5
+          }
+        }
+      },
+      plugins: [{
+        id: 'valueLabels',
+        afterDatasetsDraw(chart) {
+          const { ctx, data } = chart;
+          ctx.save();
+          ctx.font = ' 5.5px sans-serif';
+          ctx.fillStyle = '#000';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'bottom';
+
+          chart.getDatasetMeta(0).data.forEach((point, index) => {
+            const value = data.datasets[0].data[index] + '%';
+            ctx.fillText(value, point.x, point.y - 6);
+          });
+        }
+      }]
+    };
+
+    const myTrendChart = new Chart(ctxTrend, configTrend);
+    window.onload = () => {
+      const initialScores = [88.2, 88.7, 89.2, 88.2, 89.0, 89.4, 89.75];
+      myTrendChart.data.datasets[0].data = initialScores;
+      myTrendChart.update();
+    };
+    // --- ANIMATION LOGIC ---
+    setInterval(() => {
+      // Create a set of 7 new random values between 88.2 and 90.2
+      const newValues = trendData.labels.map(() => {
+        return parseFloat((Math.random() * (90.2 - 88.2) + 88.2).toFixed(2));
+      });
+
+      // Update dataset and refresh chart
+      myTrendChart.data.datasets[0].data = newValues;
+      myTrendChart.update();
+    }, 5000); // Changes every 5 seconds
+  </script> -->
+
+
+  <!-- 6th for all right side charts -->
+
+  <!-- <script>
+    // Store all charts in an array
+    const chartList = [];
+
+    function createAnimatedDonut(elementId, val1, color1) {
+      const ctx = document.getElementById(elementId).getContext('2d');
+
+      const data = {
+        labels: ['Main', 'Other'],
+        datasets: [{
+          data: [val1, parseFloat((100 - val1).toFixed(1))],
+          backgroundColor: [color1, '#D3D3D3'],
+          borderWidth: 0,
+          spacing: 1,
+          cutout: '55%',
+          borderRadius: 0.5
+        }]
+      };
+
+      const config = {
+        type: 'doughnut',
+        data: data,
+        options: {
+          rotation: 90,
+          responsive: true,
+          maintainAspectRatio: false,
+          events: [],
+          plugins: {
+            legend: { display: false },
+            tooltip: { enabled: false }
+          },
+          layout: {
+            padding: { left: 20, right: 20, top: 5, bottom: 5 }
+          }
+        },
+        plugins: [{
+          id: 'perfectCenterLabels',
+          afterDraw(chart) {
+            const { ctx } = chart;
+            ctx.save();
+            chart.getDatasetMeta(0).data.forEach((datapoint, index) => {
+              const { x, y, startAngle, endAngle, outerRadius } = datapoint;
+              const midAngle = (startAngle + endAngle) / 2;
+              const cos = Math.cos(midAngle);
+              const sin = Math.sin(midAngle);
+
+              const lineLength = 5;
+              const gapFromChart = 1;
+
+              const startX = x + (outerRadius + gapFromChart) * cos;
+              const startY = y + (outerRadius + gapFromChart) * sin;
+              const endX = x + (outerRadius + gapFromChart + lineLength) * cos;
+              const endY = y + (outerRadius + gapFromChart + lineLength) * sin;
+
+              ctx.beginPath();
+              ctx.moveTo(startX, startY);
+              ctx.lineTo(endX, endY);
+              ctx.strokeStyle = chart.data.datasets[0].backgroundColor[index];
+              ctx.lineWidth = 1;
+              ctx.lineCap = 'round';
+              ctx.stroke();
+
+              const value = chart.data.datasets[0].data[index] + '%';
+              ctx.font = 'bold 7px sans-serif';
+              ctx.fillStyle = '#000';
+              ctx.textBaseline = 'middle';
+              const isLeft = cos < 0;
+              ctx.textAlign = isLeft ? 'right' : 'left';
+              const textX = isLeft ? endX - 4 : endX + 4;
+              ctx.fillText(value, textX, endY);
+            });
+            ctx.restore();
+          }
+        }]
+      };
+
+      const chart = new Chart(ctx, config);
+      // Save chart and original value for the master animator
+      chartList.push({ chart, baseVal: val1 });
+      return chart;
+    }
+
+    // Initialize charts
+    createAnimatedDonut('rightDonutChart1', 90.1, '#9966FF');
+    createAnimatedDonut('rightDonutChart2', 92, '#1B83EC');
+    createAnimatedDonut('rightDonutChart3', 90.1, '#FDE094');
+    createAnimatedDonut('rightDonutChart4', 89.7, '#232B5B');
+    createAnimatedDonut('rightDonutChart5', 84.9, '#D84279');
+
+    // MASTER ANIMATOR FUNCTION
+    const STAGGER_MS = 60; // Change to 50 or 100 as needed
+    const WAIT_MS = 5000;   // Time between full cycles
+
+    function triggerAnimations() {
+      chartList.forEach((item, index) => {
+        setTimeout(() => {
+          const change = (Math.random() * 20) - 10;
+          let newVal1 = parseFloat((item.baseVal + change).toFixed(1));
+
+          if (newVal1 > 98) newVal1 = 98;
+          if (newVal1 < 60) newVal1 = 60;
+
+          item.chart.data.datasets[0].data = [newVal1, parseFloat((100 - newVal1).toFixed(1))];
+          item.chart.reset();
+          item.chart.update();
+        }, index * STAGGER_MS);
+      });
+
+      // Repeat the cycle
+      setTimeout(triggerAnimations, WAIT_MS);
+    }
+
+    // Start the loop
+    setTimeout(triggerAnimations, 5000)
+
+
+    // window.addEventListener('DOMContentLoaded', function () {
+    //   const elements = document.querySelectorAll('.das-right-data-value-num');
+
+    //   elements.forEach(function (el) {
+    //     let current = parseFloat(el.textContent);
+
+    //     // Detect if this value is FILES (integer) or M/B (float)
+    //     const parentValue = el.closest('.das-right-data-value');
+    //     const isFile = parentValue && !parentValue.textContent.includes('M') && !parentValue.textContent.includes('B');
+
+    //     const precision = isFile ? 0 : 2;
+
+    //     function loop() {
+    //       const mostlyUp = Math.random() < 0.7;
+
+    //       let delta;
+    //       if (isFile) {
+    //         // FILES → integer change
+    //         delta = mostlyUp ? 1 : (Math.random() < 0.5 ? -1 : 0);
+    //       } else {
+    //         // M / B → floating change (max ±2)
+    //         delta = mostlyUp
+    //           ? Math.random() * 2
+    //           : (Math.random() < 0.5 ? -1 : -2);
+    //       }
+
+    //       const next = Math.max(0, current + delta);
+
+    //       animateValue(el, current, next, 1600, precision);
+    //       current = next;
+
+    //       window.setTimeout(loop, 1200 + Math.random() * 1500);
+    //     }
+
+    //     loop();
+    //   });
+    // });
+
+  </script> -->
+
+
+  <script>
+    (function () {
+      function syncDashboardScale() {
+        const stage = document.getElementById('dashboard-stage');
+        const asset = document.getElementById('dashboard-scaler');
+        if (!stage || !asset) return;
+        const designWidth = 935.5;
+        const parentWidth = stage.offsetWidth;
+        const scale = parentWidth / designWidth;
+        asset.style.transform = `scale(${scale})`;
+        const originalHeight = asset.scrollHeight;
+        stage.style.height = (originalHeight * scale) + "px";
+      }
+
+      window.addEventListener('resize', syncDashboardScale);
+      window.addEventListener('load', syncDashboardScale);
+      setTimeout(syncDashboardScale, 300);
+
+      function animateValue(element, start, end, duration, precision = 0) {
+        if (!element) return;
+        let startTimestamp = null;
+        const step = (timestamp) => {
+          if (!startTimestamp) startTimestamp = timestamp;
+          const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+          const current = progress * (end - start) + start;
+          element.innerHTML = current.toFixed(precision);
+          if (progress < 1) window.requestAnimationFrame(step);
+        };
+        window.requestAnimationFrame(step);
+      }
+
+      const possibleValue = [
+        [[12, 58, 20, 25, 10], [45, 15, 55, 5, 40]],
+        [[40, 10, 50, 15, 55], [10, 50, 15, 55, 20]],
+        [[55, 20, 40, 10, 30], [20, 45, 10, 58, 12]],
+        [[15, 45, 15, 45, 15], [50, 10, 50, 10, 50]],
+        [[30, 55, 12, 55, 30], [10, 30, 58, 30, 10]],
+        [[5, 25, 50, 25, 60], [55, 35, 10, 35, 5]],
+        [[60, 40, 20, 45, 10], [15, 30, 55, 10, 45]],
+        [[10, 15, 12, 18, 14], [50, 55, 52, 58, 54]],
+        [[20, 60, 20, 60, 20], [40, 10, 40, 10, 40]],
+        [[5, 50, 5, 50, 5], [60, 10, 60, 10, 60]]
+      ];
+
+      const createDataset = (label, data, color) => ({
+        label: label,
+        data: data,
+        borderColor: color,
+        pointBackgroundColor: color,
+        backgroundColor: 'transparent',
+        borderWidth: 2.5,
+        tension: 0.4,
+        borderCapStyle: 'round',
+        pointRadius: (context) => {
+          const index = context.dataIndex;
+          const lastIndex = context.dataset.data.length - 1;
+          return (index === 0 || index === lastIndex) ? 2 : 0;
+        }
+      });
+
+      const ctx1 = document.getElementById('graph1')?.getContext('2d');
+      const myChart = ctx1 ? new Chart(ctx1, {
+        type: 'line',
+        data: {
+          labels: [0, 1, 2, 3, 4],
+          datasets: [
+            createDataset('Deep Blue', possibleValue[0][0], '#3743D6'),
+            createDataset('Sky Blue', possibleValue[0][1], '#1D83EC')
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: { x: { display: false }, y: { display: false, min: 0, max: 65 } }
+        }
+      }) : null;
+
+      const ctx2 = document.getElementById('zip-piechart')?.getContext('2d');
+      const zipChartTxtEle1 = document.getElementById('zip-piechart-percent1');
+      const zipChartTxtEle2 = document.getElementById('zip-piechart-percent2');
+      const zipChartTxtEle3 = document.getElementById('zip-piechart-percent3');
+      let currentPieValues = [33.24, 3.76, 63];
+      if (zipChartTxtEle1) {
+        animateValue(zipChartTxtEle1, 0, currentPieValues[2], 2000, 2);
+        animateValue(zipChartTxtEle2, 0, currentPieValues[1], 2000, 2);
+        animateValue(zipChartTxtEle3, 0, currentPieValues[0], 2000, 2);
+      }
+
+      const myPieChart = ctx2 ? new Chart(ctx2, {
+        type: 'pie',
+        data: {
+          labels: ['accurate', 'invalid', 'null'],
+          datasets: [{
+            data: currentPieValues,
+            backgroundColor: ['#B6BAB3', '#DA429E', '#1D83EC'],
+            borderWidth: 1,
+            hoverOffset: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          events: [],
+          animation: { duration: 1800, easing: 'easeInOutQuart' },
+          plugins: { legend: { display: false }, title: { display: false }, tooltip: { enabled: false } }
+        }
+      }) : null;
+
+      const ctx3 = document.getElementById('comp-barchart-id')?.getContext('2d');
+      let currentVendorValues = [91, 90, 89, 89, 73];
+      const myVendorChart = ctx3 ? new Chart(ctx3, {
+        type: 'bar',
+        data: {
+          labels: ['Jack Henry', 'Visa', 'Banno', 'nCino', 'FIS North'],
+          datasets: [{
+            data: [...currentVendorValues],
+            backgroundColor: ['#4377CB', '#9560D7', '#D6D6D6', '#F7E09A', '#9ACBBB'],
+            barThickness: 10,
+            borderRadius: 0,
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: { duration: 2000, easing: 'easeInOutQuart' },
+          layout: { padding: { right: 10 } },
+          plugins: { legend: { display: false }, tooltip: { enabled: false } },
+          scales: {
+            x: {
+              beginAtZero: true,
+              max: 100,
+              grid: { display: true, drawBorder: false, drawTicks: false, color: '#E0E0E0' },
+              ticks: { stepSize: 20, callback: value => value + '%', font: { size: 5 }, padding: 5 }
+            },
+            y: { grid: { display: true, drawBorder: true, drawTicks: false }, ticks: { color: '#000', font: { size: 7, weight: 'bold' }, padding: 5 } }
+          }
+        },
+        plugins: [{
+          id: 'innerLabels',
+          afterDatasetsDraw(chart) {
+            const { ctx, data } = chart;
+            ctx.save();
+            ctx.font = '5px sans-serif';
+            ctx.fillStyle = '#000';
+            ctx.textAlign = 'right';
+            ctx.textBaseline = 'middle';
+            chart.getDatasetMeta(0).data.forEach((bar, index) => {
+              const value = data.datasets[0].data[index] + '%';
+              if (bar.width > 10) ctx.fillText(value, bar.x - 2, bar.y);
+            });
+          }
+        }]
+      }) : null;
+
+      const ctxGauge = document.getElementById('gaugeChart')?.getContext('2d');
+      const gaugeTextEle = document.getElementById('gauge-percent');
+      let currentScore = 89.2;
+      const myGauge = ctxGauge ? new Chart(ctxGauge, {
+        type: 'doughnut',
+        data: {
+          datasets: [{ data: [currentScore, 100 - currentScore], backgroundColor: ['#1B83EC', '#D0D0D0'], borderWidth: 0, cutout: '70%', borderRadius: 2, spacing: 2 }]
+        },
+        options: {
+          rotation: -90,
+          circumference: 180,
+          responsive: true,
+          maintainAspectRatio: true,
+          aspectRatio: 1.8,
+          animation: { duration: 1200, easing: 'easeInOutQuart' },
+          plugins: { legend: { display: false }, tooltip: { enabled: false } },
+          events: []
+        }
+      }) : null;
+      if (gaugeTextEle) animateValue(gaugeTextEle, 0, currentScore, 1200, 1);
+
+      const filesEle = document.getElementById('cumu-s-value1');
+      const rowsEle = document.getElementById('cumu-s-value2');
+      const fieldsEle = document.getElementById('cumu-s-value3');
+      let currentVals = [2.00, 126.00, 3.00];
+      if (filesEle) {
+        animateValue(filesEle, 1.5, currentVals[0], 10000, 2);
+        animateValue(rowsEle, 125.5, currentVals[1], 10000, 2);
+        animateValue(fieldsEle, 2.5, currentVals[2], 10000, 2);
+      }
+
+      const ctxTrend = document.getElementById('monthlyTrendChart')?.getContext('2d');
+      const trendLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'];
+      const myTrendChart = ctxTrend ? new Chart(ctxTrend, {
+        type: 'line',
+        data: {
+          labels: trendLabels,
+          datasets: [{
+            data: [88, 88, 88, 88, 88, 88, 88],
+            borderColor: '#D84279',
+            backgroundColor: 'transparent',
+            borderWidth: 2.5,
+            tension: 0,
+            pointBackgroundColor: '#D84279',
+            pointBorderColor: '#FFF',
+            pointBorderWidth: 0,
+            pointRadius: 2.4,
+            pointHoverRadius: 5
+          }]
+        },
+        options: {
+          animation: { duration: 1200, easing: 'easeInOutQuart' },
+          maintainAspectRatio: false,
+          events: [],
+          plugins: { legend: { display: false }, tooltip: { enabled: false }, title: { display: false } },
+          scales: {
+            x: { offset: true, grid: { display: false }, border: { display: true, color: '#000', width: 1 }, ticks: { font: { size: 7, weight: '600' }, color: '#333' } },
+            y: {
+              grid: { color: '#E0E0E0', tickBorderDash: [1, 5], drawTicks: false, drawBorder: false },
+              border: { display: false, dash: [5, 5] },
+              ticks: { display: true, color: '#333', font: { size: 7 }, padding: 10, stepSize: 0.5, maxTicksLimit: 6, callback: v => v.toFixed(1) },
+              min: 88, max: 90.5
+            }
+          }
+        },
+        plugins: [{
+          id: 'valueLabels',
+          afterDatasetsDraw(chart) {
+            const { ctx, data } = chart;
+            ctx.save();
+            ctx.font = ' 5.5px sans-serif';
+            ctx.fillStyle = '#000';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'bottom';
+            chart.getDatasetMeta(0).data.forEach((point, index) => {
+              const value = data.datasets[0].data[index] + '%';
+              ctx.fillText(value, point.x, point.y - 6);
+            });
+          }
+        }]
+      }) : null;
+
+      const chartList = [];
+      function createAnimatedDonut(elementId, val1, color1) {
+        const el = document.getElementById(elementId);
+        if (!el) return;
+        const ctx = el.getContext('2d');
+        const chart = new Chart(ctx, {
+          type: 'doughnut',
+          data: {
+            labels: ['Main', 'Other'],
+            datasets: [{ data: [val1, parseFloat((100 - val1).toFixed(1))], backgroundColor: [color1, '#D3D3D3'], borderWidth: 0, spacing: 1, cutout: '55%', borderRadius: 0.5 }]
+          },
+          options: {
+            rotation: 90,
+            responsive: true,
+            maintainAspectRatio: false,
+            events: [],
+            plugins: { legend: { display: false }, tooltip: { enabled: false } },
+            layout: { padding: { left: 20, right: 20, top: 5, bottom: 5 } }
+          },
+          plugins: [{
+            id: 'perfectCenterLabels',
+            afterDraw(chart) {
+              const { ctx } = chart;
+              ctx.save();
+              chart.getDatasetMeta(0).data.forEach((datapoint, index) => {
+                const { x, y, startAngle, endAngle, outerRadius } = datapoint;
+                const midAngle = (startAngle + endAngle) / 2;
+                const cos = Math.cos(midAngle);
+                const sin = Math.sin(midAngle);
+                const lineLength = 5;
+                const gapFromChart = 1;
+                const startX = x + (outerRadius + gapFromChart) * cos;
+                const startY = y + (outerRadius + gapFromChart) * sin;
+                const endX = x + (outerRadius + gapFromChart + lineLength) * cos;
+                const endY = y + (outerRadius + gapFromChart + lineLength) * sin;
+                ctx.beginPath();
+                ctx.moveTo(startX, startY);
+                ctx.lineTo(endX, endY);
+                ctx.strokeStyle = chart.data.datasets[0].backgroundColor[index];
+                ctx.lineWidth = 1;
+                ctx.lineCap = 'round';
+                ctx.stroke();
+                const value = chart.data.datasets[0].data[index] + '%';
+                ctx.font = 'bold 7px sans-serif';
+                ctx.fillStyle = '#000';
+                ctx.textBaseline = 'middle';
+                const isLeft = cos < 0;
+                ctx.textAlign = isLeft ? 'right' : 'left';
+                const textX = isLeft ? endX - 4 : endX + 4;
+                ctx.fillText(value, textX, endY);
+              });
+              ctx.restore();
+            }
+          }]
+        });
+        chartList.push({ chart, baseVal: val1 });
+      }
+
+      createAnimatedDonut('rightDonutChart1', 90.1, '#9966FF');
+      createAnimatedDonut('rightDonutChart2', 92, '#1B83EC');
+      createAnimatedDonut('rightDonutChart3', 90.1, '#FDE094');
+      createAnimatedDonut('rightDonutChart4', 89.7, '#232B5B');
+      createAnimatedDonut('rightDonutChart5', 84.9, '#D84279');
+
+      let currentScene = 0;
+      const percentageEle1 = document.getElementById('sla-percent-txt-1');
+      const percentageEle2 = document.getElementById('sla-percent-txt-2');
+      let prevVal1 = 99;
+      let prevVal2 = 90;
+
+      if (myChart) {
+        setInterval(() => {
+          currentScene = (currentScene + 1) % possibleValue.length;
+          myChart.data.datasets[0].data = possibleValue[currentScene][0];
+          myChart.data.datasets[1].data = possibleValue[currentScene][1];
+          myChart.update();
+          const target1 = Math.floor(Math.random() * 10) + 89;
+          const target2 = Math.floor(Math.random() * 5) + 88;
+          animateValue(percentageEle1, prevVal1, target1, 1200);
+          animateValue(percentageEle2, prevVal2, target2, 1200);
+          prevVal1 = target1; prevVal2 = target2;
+        }, 2000);
+      }
+
+      if (myPieChart) {
+        setInterval(() => {
+          const nAcc = parseFloat((Math.random() * (80 - 60) + 60).toFixed(2));
+          const nInv = parseFloat((Math.random() * (7 - 2) + 2).toFixed(2));
+          const nNull = parseFloat((100 - (nAcc + nInv)).toFixed(2));
+          const nVals = [nNull, nInv, nAcc];
+          myPieChart.data.datasets[0].data = nVals;
+          myPieChart.update();
+          animateValue(zipChartTxtEle1, currentPieValues[2], nVals[2], 2000, 2);
+          animateValue(zipChartTxtEle2, currentPieValues[1], nVals[1], 2000, 2);
+          animateValue(zipChartTxtEle3, currentPieValues[0], nVals[0], 2000, 2);
+          currentPieValues = nVals;
+        }, 2500);
+      }
+
+      if (myVendorChart) {
+        setInterval(() => {
+          const newVals = currentVendorValues.map(() => Math.floor(Math.random() * (98 - 70) + 70));
+          myVendorChart.data.datasets[0].data = newVals;
+          myVendorChart.update();
+          currentVendorValues = newVals;
+        }, 3000);
+      }
+
+      if (myGauge) {
+        setInterval(() => {
+          const newScore = parseFloat((Math.random() * (96 - 88) + 88).toFixed(1));
+          myGauge.data.datasets[0].data = [newScore, 100 - newScore];
+          myGauge.update();
+          animateValue(gaugeTextEle, currentScore, newScore, 1200, 1);
+          currentScore = newScore;
+        }, 3000);
+      }
+
+      if (filesEle) {
+
+        setInterval(() => {
+
+          const getTiny = (v, m, base) => {
+            const delta = Math.random() * m; // slight upward only
+            const next = v + delta;
+            return parseFloat(Math.max(base - 1, next).toFixed(2));
+          };
+
+          const nVs = [
+            getTiny(currentVals[0], 0.15, currentVals[0]),
+            getTiny(currentVals[1], 0.15, currentVals[1]),
+            getTiny(currentVals[2], 0.15, currentVals[2])
+          ];
+
+          animateValue(filesEle, currentVals[0], nVs[0], 10000, 2);
+          animateValue(rowsEle, currentVals[1], nVs[1], 10000, 2);
+          animateValue(fieldsEle, currentVals[2], nVs[2], 10000, 2);
+
+          currentVals = nVs;
+
+        }, 10000);
+
+      }
+
+
+      if (myTrendChart) {
+        window.addEventListener('load', () => {
+          myTrendChart.data.datasets[0].data = [88.2, 88.7, 89.2, 88.2, 89.0, 89.4, 89.75];
+          myTrendChart.update();
+        });
+        setInterval(() => {
+          myTrendChart.data.datasets[0].data = trendLabels.map(() => parseFloat((Math.random() * (90.2 - 88.2) + 88.2).toFixed(2)));
+          myTrendChart.update();
+        }, 5000);
+      }
+
+      function triggerAnimations() {
+        chartList.forEach((item, index) => {
+          setTimeout(() => {
+            let nV1 = parseFloat((item.baseVal + (Math.random() * 20 - 10)).toFixed(1));
+            if (nV1 > 98) nV1 = 98; if (nV1 < 60) nV1 = 60;
+            item.chart.data.datasets[0].data = [nV1, parseFloat((100 - nV1).toFixed(1))];
+            // item.chart.reset(); 
+            item.chart.update();
+          }, index * 60);
+        });
+        setTimeout(triggerAnimations, 5000);
+      }
+      if (chartList.length > 0) setTimeout(triggerAnimations, 5000);
+    })();
+  
+  </script>
+
+
 </body>
 
 </html>
